@@ -12,3 +12,10 @@
 .page-mycourses .block_eledia_telc_coursesearch .block-controls {
     display: none;
 }
+
+.block_eledia_telc_coursesearch .list-image {
+    height: 5rem;
+    width: 20rem;
+    background-position: center;
+    background-size: cover;
+}
