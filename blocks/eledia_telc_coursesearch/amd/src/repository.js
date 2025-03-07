@@ -53,6 +53,7 @@ export const getEnrolledCoursesByTimeline = args => {
  * @return {promise} Resolved with an array of categories
  */
 export const getCategories = args => {
+    // Some comment.
     const request = {
         methodname: 'core_course_get_categories',
         args: args

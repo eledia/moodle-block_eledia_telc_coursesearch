@@ -539,9 +539,45 @@ const renderCourses = (root, coursesData) => {
             return course;
         });
         if (coursesData.courses.length) {
-            // NOTE: Render function for mustache.
             return Templates.render(currentTemplate, {
                 courses: coursesData.courses,
+            });
+        } else {
+            return noCoursesRender(root);
+        }
+    }
+};
+
+/**
+ * Render the categories in search dropdown.
+ *
+ * @param {object} root The root element for the courses view.
+ * @param {array} categoriesData containing array of returned courses.
+ * @return {promise} jQuery promise resolved after rendering is complete.
+ */
+const renderCategories = (root, categoriesData) => {
+
+    const filters = getFilterValues(root);
+
+    const template = 'block_eledia_telc_coursesearch/nav-grouping-selector';
+
+    if (!categoriesData) {
+        // TODO: Make function for empty result or solve it here.
+        return noCoursesRender(root);
+    } else {
+        // Sometimes we get weird objects coming after a failed search, cast to ensure typing functions.
+        if (Array.isArray(categoriesData.courses) === false) {
+            categoriesData.courses = Object.values(categoriesData.courses);
+        }
+        // Whether the course category should be displayed in the course item.
+        categoriesData.courses = categoriesData.courses.map(course => {
+            course.showcoursecategory = filters.displaycategories === 'on';
+            return course;
+        });
+        if (categoriesData.courses.length) {
+            // NOTE: Render function for mustache.
+            return Templates.render(template, {
+                courses: categoriesData.courses,
             });
         } else {
             return noCoursesRender(root);
@@ -660,6 +696,8 @@ const pageBuilder = (coursesData, currentPage, pageData, actions, activeSearch =
     courseOffset = coursesData.nextoffset;
 };
 
+// TODO: Some function like the above to filter our category names and ids from the search results.
+
 /**
  * In cases when switching between regular rendering and search rendering we need to reset some variables.
  */
@@ -718,15 +756,16 @@ const searchFunctionalityCurry = () => {
  */
 const catSearchFunctionalityCurry = () => {
     resetGlobals();
-    return (actions, root, promises, inputValue) => {
+    return (filters, currentPage, pageData, actions, root, promises, limit, inputValue) => {
         const searchingPromise = getSearchCategories(
-            key,
+            "name",
             inputValue,
             true
-        ).then(coursesData => {
+        ).then(categoriesData => {
             // NOTE: Here it goes.
-            pageBuilder(coursesData, actions);
-            return renderCourses(root, loadedPages[currentPage]);
+            console.log(categoriesData);
+            //pageBuilder(categoriesData, actions);
+            //return renderCategories(root, loadedPages[currentPage]);
         }).catch(Notification.exception);
 
         promises.push(searchingPromise);
@@ -795,6 +834,9 @@ const initializePagedContent = (root, promiseFunction, inputValue = null) => {
     }).catch(Notification.exception);
 };
 
+
+// TODO: For category search there might be necessary a initilizeCatContent() function.
+
 /**
  * Listen to, and handle events for the eledia_telc_coursesearch block.
  *
@@ -843,11 +885,18 @@ const registerEventListeners = (root, page) => {
     const input = page.querySelector(SELECTORS.region.searchInput);
     const catinput = page.querySelector(SELECTORS.region.catsearchInput);
     const clearIcon = page.querySelector(SELECTORS.region.clearIcon);
+    const clearCatIcon = page.querySelector(SELECTORS.region.clearCatIcon);
 
     clearIcon.addEventListener('click', () => {
         input.value = '';
         input.focus();
         clearSearch(clearIcon, root);
+    });
+
+    clearCatIcon.addEventListener('click', () => {
+        input.value = '';
+        input.focus();
+        clearCatSearch(clearCatIcon, root);
     });
 
     input.addEventListener('input', debounce(() => {
@@ -862,10 +911,10 @@ const registerEventListeners = (root, page) => {
     // Listener for category search.
     catinput.addEventListener('input', debounce(() => {
         if (catinput.value === '') {
-            clearSearch(clearIcon, root);
+            clearCatSearch(clearCatIcon, root);
         } else {
-            activeSearch(clearIcon);
-            initializePagedContent(root, /* TODO: Make own search for categories. */ searchFunctionalityCurry(), catinput.value.trim());
+            activeSearch(clearCatIcon);
+            initializePagedContent(root, catSearchFunctionalityCurry(), catinput.value.trim());
         }
     }, 1000));
 };
@@ -878,6 +927,18 @@ const registerEventListeners = (root, page) => {
  */
 export const clearSearch = (clearIcon, root) => {
     clearIcon.classList.add('d-none');
+    init(root);
+};
+
+/**
+ * Reset the search icon and trigger the init for the category search.
+ *
+ * @param {HTMLElement} clearIcon Our closing icon to manipulate.
+ * @param {Object} root The eledia_telc_coursesearch block container element.
+ */
+export const clearCatSearch = (clearCatIcon, root) => {
+    clearCatIcon.classList.add('d-none');
+    // TODO: Own init function if required.
     init(root);
 };
 
