@@ -48,6 +48,7 @@ $string['availablegroupings'] = 'Available filters';
 $string['availablegroupings_desc'] = 'Course filters which are available for selection by users. If none are selected, all courses will be displayed.';
 $string['card'] = 'Card';
 $string['cards'] = 'Cards';
+$string['clearcatsearch'] = '[data-action="clearcatsearch"]';
 $string['courseprogress'] = 'Course progress:';
 $string['completepercent'] = '{$a}% complete';
 $string['createcourse'] = 'Create course';

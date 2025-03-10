@@ -38,7 +38,9 @@ export default {
     region: {
         selectBlock: '[data-region="eledia_telc_coursesearch"]',
         clearIcon: '[data-action="clearsearch"]',
+        clearCatIcon: '[data-action="clearcatsearch"]',
         searchInput: '[data-action="search"]',
         catsearchInput: '[data-action="catsearch"]',
+        catsearchDropdown: '.dropdown-categories',
     },
 };

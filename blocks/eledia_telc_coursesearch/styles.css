@@ -19,3 +19,34 @@
     background-position: center;
     background-size: cover;
 }
+
+[data-action="catsearch"]::after {
+    /*content: "";*/
+    content: "aft";
+    margin-right: 0;
+    margin-left: 4px;
+    font-size: 9px;
+    width: 9px;
+    border: 0;
+    font-family: "Font Awesome 6 Free";
+    display: inline-block;
+    -webkit-font-smoothing: antialiased;
+    font-weight: 900;
+    box-sizing: border-box;
+}
+
+input::after {
+    /*content: "";*/
+    /*TODO: Make visible.*/
+    content: "aft";
+    margin-right: 0;
+    margin-left: 4px;
+    font-size: 9px;
+    width: 9px;
+    border: 0;
+    font-family: "Font Awesome 6 Free";
+    display: inline-block;
+    -webkit-font-smoothing: antialiased;
+    font-weight: 900;
+    box-sizing: border-box;
+}
