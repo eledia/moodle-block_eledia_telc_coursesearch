@@ -59,7 +59,7 @@ export const getCategories = args => {
         args: args
     };
 
-    return Ajax.call([request]);
+    return Ajax.call([request])[0];
 };
 
 /**

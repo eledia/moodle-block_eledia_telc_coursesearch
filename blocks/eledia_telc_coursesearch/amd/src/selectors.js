@@ -41,6 +41,9 @@ export default {
         clearCatIcon: '[data-action="clearcatsearch"]',
         searchInput: '[data-action="search"]',
         catsearchInput: '[data-action="catsearch"]',
+        catsearch: '.categorysearch',
+        // TODO: Change class selector.
         catsearchDropdown: '.dropdown-categories',
+        catsearchDropdownDiv: '.category-droprown-container',
     },
 };

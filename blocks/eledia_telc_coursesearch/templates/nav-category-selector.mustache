@@ -15,7 +15,7 @@
     along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 }}
 {{!
-    @template block_eledia_telc_coursesearch/nav-grouping-selector
+    @template block_eledia_telc_coursesearch/nav-category-selector
 
     This template renders grouping dropdown.
 
@@ -37,43 +37,30 @@
         "displaygroupinghidden": true,
         "displaygroupingselector": true
     }
+    Example context (json):
+    "categories" : {
+        [
+            {
+                "id": 1,
+                "name": "categoryname"
+            }
+        ]
+    }
 }}
-<div class="dropdown mb-1 me-1">
-<div class="mb-1 me-1 flex-grow-1 catprevent">
-    {{< block_eledia_telc_coursesearch/search-input-auto-categories }}
-        {{$label}}{{#str}}
-            searchcategories, block_eledia_telc_coursesearch
-        {{/str}}{{/label}}
-        {{$placeholder}}{{#str}}
-            searchcategories, block_eledia_telc_coursesearch
-        {{/str}}{{/placeholder}}
-    {{/ block_eledia_telc_coursesearch/search-input-auto-categories }}
-</div>
-    <ul class="dropdown-menu dropdown-categories catprevent" role="menu" data-show-active-item data-skip-active-class="true" data-active-item-text aria-labelledby="groupingdropdown">
-        <li class="dropdown-divider" role="presentation">
-            <span class="filler">&nbsp;</span>
-        </li>
-        <li>
-            <a class="dropdown-item catprevent" href="#" data-filter="grouping" data-value="all" data-pref="all" aria-label="{{#str}} aria:allcourses, block_eledia_telc_coursesearch {{/str}}" aria-controls="courses-view-{{uniqid}}" role="menuitem" {{#all}}aria-current="true"{{/all}}>
-                {{#str}} all, block_eledia_telc_coursesearch {{/str}}
-            </a>
-        </li>
-        {{! Customfield start }}
-            <li class="dropdown-divider" role="presentation">
-                <span class="filler">&nbsp;</span>
-            </li>
-            {{#customfieldvalues}}
-                <li>
-                    <a class="dropdown-item catprevent" href="#" data-filter="grouping"
-                       data-value="customfield" data-pref="customfield" data-customfieldvalue="{{value}}"
-                       aria-label="{{#str}}aria:customfield, block_eledia_telc_coursesearch, {{name}}{{/str}}"
-                       aria-controls="courses-view-{{uniqid}}" role="menuitem" {{#active}}aria-current="true"{{/active}}>
-                        {{name}}
-                    </a>
-                </li>
-            {{/customfieldvalues}}
-        {{! Customfield end }}
-    </ul>
+<div class="dropdown categorysearch mb-1 me-1">
+    <div class="mb-1 me-1 flex-grow-1 catprevent">
+        {{< block_eledia_telc_coursesearch/search-input-auto-categories }}
+            {{$label}}{{#str}}
+                searchcategories, block_eledia_telc_coursesearch
+            {{/str}}{{/label}}
+            {{$placeholder}}{{#str}}
+                searchcategories, block_eledia_telc_coursesearch
+            {{/str}}{{/placeholder}}
+        {{/ block_eledia_telc_coursesearch/search-input-auto-categories }}
+    </div>
+    <div class="category-droprown-container">
+        {{> block_eledia_telc_coursesearch/nav-category-dropdown }}
+    </div>
 </div>
 {{! Filler start }}
 <div class="mb-1 me-auto">

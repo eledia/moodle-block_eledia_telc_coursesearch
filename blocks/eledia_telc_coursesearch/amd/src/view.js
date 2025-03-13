@@ -20,12 +20,14 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+//import $, { error } from 'jquery';
 import $ from 'jquery';
 import * as Repository from 'block_eledia_telc_coursesearch/repository';
 import * as PagedContentFactory from 'core/paged_content_factory';
 import * as PubSub from 'core/pubsub';
 import * as CustomEvents from 'core/custom_interaction_events';
 import * as Notification from 'core/notification';
+import { exception as displayException } from 'core/notification';
 import * as Templates from 'core/templates';
 import * as CourseEvents from 'core_course/events';
 import SELECTORS from 'block_eledia_telc_coursesearch/selectors';
@@ -163,11 +165,14 @@ const getSearchMyCourses = (filters, limit, searchValue) => {
 const getSearchCategories = (key, searchValue, subCategories) => {
         const params = {
                 // NOTE: It might be beneficial to allow multiple criteria of the core supported ones.
+                //criteria: [
+                //        {
+                //                key: key,
+                //                value: searchValue,
+                //        }
+                //],
+                //addsubcategories: subCategories,
                 criteria: [
-                        {
-                                key: key,
-                                searchValue: searchValue,
-                        }
                 ],
                 addsubcategories: subCategories,
         };
@@ -551,36 +556,50 @@ const renderCourses = (root, coursesData) => {
 /**
  * Render the categories in search dropdown.
  *
- * @param {object} root The root element for the courses view.
+ * @param {string} dropdownContainer The categories element for the courses view.
+ * @param {string} dropdown The categories element for the courses view.
  * @param {array} categoriesData containing array of returned courses.
+ * @param {object} page The page object.
  * @return {promise} jQuery promise resolved after rendering is complete.
  */
-const renderCategories = (root, categoriesData) => { // eslint-disable-line
+const renderCategories = (dropdownContainer, dropdown, categoriesData, page) => { // eslint-disable-line
 
-        const filters = getFilterValues(root);
+        // const filters = getFilterValues(categories);
 
-        const template = 'block_eledia_telc_coursesearch/nav-grouping-selector';
+        const template = 'block_eledia_telc_coursesearch/nav-category-dropdown';
 
         if (!categoriesData) {
                 // TODO: Make function for empty result or solve it here.
-                return noCoursesRender(root);
+                window.console.log('!categoriesData');
+                window.console.log(categoriesData);
+                // return noCoursesRender(categories);
         } else {
+                // TODO: Render template with data. Mustache template should be able to make the data work by itself.
                 // Sometimes we get weird objects coming after a failed search, cast to ensure typing functions.
-                if (Array.isArray(categoriesData.courses) === false) {
-                        categoriesData.courses = Object.values(categoriesData.courses);
-                }
+                //if (Array.isArray(categoriesData.data) === false) {
+                //        categoriesData.data = Object.values(categoriesData.data);
+                //}
                 // Whether the course category should be displayed in the course item.
-                categoriesData.courses = categoriesData.courses.map(course => {
-                        course.showcoursecategory = filters.displaycategories === 'on';
-                        return course;
-                });
-                if (categoriesData.courses.length) {
+                // if (categoriesData.data.length) {
+                if (categoriesData) {
                         // NOTE: Render function for mustache.
-                        return Templates.render(template, {
-                                courses: categoriesData.courses,
-                        });
+                        window.console.log('render categoriesData');
+                        return Templates.renderForPromise(template, {
+                                categories: categoriesData,
+                        }).then(({ html, js }) => {
+                                window.console.log('replaceNodeContents');
+                                window.console.log(html);
+                                window.console.log(js);
+                                const renderResult = Templates.replaceNodeContents(dropdownContainer, html, js);
+                                const catDropdown = page.querySelector(dropdown);
+                                catDropdown.style.display = 'block';
+                                return renderResult;
+                        }).catch(error => displayException(error));
+
                 } else {
-                        return noCoursesRender(root);
+                        window.console.log('no render categoriesData false');
+                        // return noCoursesRender(categories);
+                        return false;
                 }
         }
 };
@@ -753,23 +772,24 @@ const searchFunctionalityCurry = () => {
 /**
  * Initialize the categoy searching functionality so we can call it when required.
  *
- * @return {function(Object, Number, Object, Object, Object, Promise, Number, String): void}
+ * @return {function(Object): void}
  */
-const catSearchFunctionalityCurry = () => {
-        resetGlobals();
-        return (filters, currentPage, pageData, actions, root, promises, limit, inputValue) => {
+const catSearchFunctionality = () => {
+        return (dropdownContainer, dropdown, page, inputValue) => {
                 const searchingPromise = getSearchCategories(
                         "name",
                         inputValue,
                         true
                 ).then(categoriesData => {
                         // NOTE: Here it goes.
-                        window.console.log(categoriesData);
+                        return renderCategories(dropdownContainer, dropdown, categoriesData, page);
                         //pageBuilder(categoriesData, actions);
                         //return renderCategories(root, loadedPages[currentPage]);
                 }).catch(Notification.exception);
 
-                promises.push(searchingPromise);
+                // promises.push(searchingPromise);
+                // window.console.log(searchingPromise);
+                return searchingPromise;
         };
 };
 
@@ -835,8 +855,21 @@ const initializePagedContent = (root, promiseFunction, inputValue = null) => {
         }).catch(Notification.exception);
 };
 
+// TODO: Make own function to populate the category search.
+/**
+ * Initialise the list of categories in the search dropdown.
+ *
+ * @param {string} dropdownContainer The dropdown container element.
+ * @param {string} dropdown The dropdown element for the search results.
+ * @param {function} promiseFunction How do we fetch the categories and what do we do with them?
+ * @param {object} page The page object.
+ * @param {null | string} inputValue What to search for
+ */
+const initializeCategorySearchContent = (dropdownContainer, dropdown, promiseFunction, page, inputValue = null) => {// eslint-disable-line
+        const $categories = promiseFunction(dropdownContainer, dropdown, page, inputValue);
+        window.console.log($categories);
+};
 
-// TODO: For category search there might be necessary a initilizeCatContent() function.
 
 /**
  * Listen to, and handle events for the eledia_telc_coursesearch block.
@@ -885,6 +918,7 @@ const registerEventListeners = (root, page) => {
         // Searching functionality event handlers.
         const input = page.querySelector(SELECTORS.region.searchInput);
         const catinput = page.querySelector(SELECTORS.region.catsearchInput);
+        //const catSearch = page.querySelector(SELECTORS.region.catsearchDropdown);
         const catDropdown = page.querySelector(SELECTORS.region.catsearchDropdown);
         const clearIcon = page.querySelector(SELECTORS.region.clearIcon);
         const clearCatIcon = page.querySelector(SELECTORS.region.clearCatIcon);
@@ -898,7 +932,7 @@ const registerEventListeners = (root, page) => {
         clearCatIcon.addEventListener('click', () => {
                 input.value = '';
                 input.focus();
-                clearCatSearch(clearCatIcon, root);
+                clearCatSearch(clearCatIcon);
         });
 
         input.addEventListener('input', debounce(() => {
@@ -913,10 +947,15 @@ const registerEventListeners = (root, page) => {
         // Listener for category search.
         catinput.addEventListener('input', debounce(() => {
                 if (catinput.value === '') {
-                        clearCatSearch(clearCatIcon, root);
+                        clearCatSearch(clearCatIcon);
                 } else {
                         activeSearch(clearCatIcon);
-                        initializePagedContent(root, catSearchFunctionalityCurry(), catinput.value.trim());
+                        initializeCategorySearchContent(
+                                SELECTORS.region.catsearchDropdownDiv,
+                                SELECTORS.region.catsearchDropdown,
+                                catSearchFunctionality(),
+                                page,
+                                catinput.value.trim());
                 }
         }, 1000));
 
@@ -943,12 +982,11 @@ export const clearSearch = (clearIcon, root) => {
  * Reset the search icon and trigger the init for the category search.
  *
  * @param {HTMLElement} clearCatIcon Our closing icon to manipulate.
- * @param {Object} root The eledia_telc_coursesearch block container element.
  */
-export const clearCatSearch = (clearCatIcon, root) => {
+export const clearCatSearch = (clearCatIcon) => {
         clearCatIcon.classList.add('d-none');
         // TODO: Own init function if required.
-        init(root);
+        // init(root);
 };
 
 /**
