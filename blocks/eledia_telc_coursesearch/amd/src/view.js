@@ -67,6 +67,9 @@ let namespace = null;
 
 let catInit = false;
 
+let selectedCategories = [];
+let selectableCategories = [];
+
 /**
  * Whether the summary display has been loaded.
  *
@@ -784,6 +787,7 @@ const catSearchFunctionality = () => {
                         true
                 ).then(categoriesData => {
                         // NOTE: Here it goes.
+                        selectableCategories = categoriesData;
                         return renderCategories(dropdownContainer, dropdown, categoriesData, page);
                         //pageBuilder(categoriesData, actions);
                         //return renderCategories(root, loadedPages[currentPage]);
@@ -1042,13 +1046,36 @@ const manageCategorydropdownCollapse = (e) => {
 
 /**
  * TODO: complete
- *  * Hide category dropdown if clicked outside category search.
- *   *
- *    * @param {PointerEvent} e a click.
- *     */
-const manageCategorydropdownItems = (e, selected, selectable, dropdownDiv, dropdown, promiseFunction, page) => {
-        renderCategories(dropdownContainer, dropdown, categoriesData, page);
-}
+ * Hide category dropdown if clicked outside category search.
+ *
+ * @param {PointerEvent} e a click.
+ * @param {string} selected
+ * @param {string} selectable
+ * @param {string} dropdownDiv
+ * @param {string} dropdown
+ * @param {object} promiseFunction
+ * @param {object} page
+ **/
+const manageCategorydropdownItems = (e, selected, selectable, dropdownDiv, dropdown, promiseFunction, page) => {// eslint-disable-line
+        const template = 'block_eledia_telc_coursesearch/nav-category-dropdown';
+        const categoryId = e.target.dataset.catId;
+        if (e.target.classList.contains(selectable)) {
+                const categoryIndex = selectableCategories.findIndex(value => value.id == categoryId);
+                selectedCategories.push(selectableCategories.splice(categoryIndex, (categoryIndex + 1))[0]);
+        } else {
+                const categoryIndex = selectedCategories.findIndex(value => value.id == categoryId);
+                selectableCategories.push(selectedCategories.splice(categoryIndex, (categoryIndex + 1))[0]);
+        }
+        return Templates.renderForPromise(template, {
+                categories: selectableCategories,
+                catselections: selectedCategories,
+        }).then(({ html, js }) => {
+                const renderResult = Templates.replaceNodeContents(dropdownDiv, html, js);
+                const catDropdown = page.querySelector(dropdown);
+                catDropdown.style.display = 'block';
+                return renderResult;
+        }).catch(error => displayException(error));
+};
 
 /**
  * Intialise the courses list and cards views on page load.
