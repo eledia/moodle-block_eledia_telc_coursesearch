@@ -65,6 +65,8 @@ let lastLimit = 0;
 
 let namespace = null;
 
+let catInit = false;
+
 /**
  * Whether the summary display has been loaded.
  *
@@ -941,7 +943,19 @@ const registerEventListeners = (root, page) => {
                 }
         }, 1000));
 
-        // Listener for category search.
+        // Initialize category search dropdown on first click.
+        catinput.addEventListener('click', () => {
+                if (!catInit) {
+                        initializeCategorySearchContent(
+                                SELECTORS.cat.dropdownDiv,
+                                SELECTORS.cat.dropdown,
+                                catSearchFunctionality(),
+                                page,
+                                '');
+                        catInit = true;
+                }
+        });
+
         catinput.addEventListener('input', debounce(() => {
                 if (catinput.value === '') {
                         clearCatSearch(clearCatIcon);
