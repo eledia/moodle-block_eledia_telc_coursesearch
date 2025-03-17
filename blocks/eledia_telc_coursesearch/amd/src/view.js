@@ -985,6 +985,7 @@ const registerEventListeners = (root, page) => {
         document.body.addEventListener('click', manageCategorydropdownCollapse);
         document.body.addEventListener('click', (e) => {
                 if (e.target.classList.contains(catSelected) || e.target.classList.contains(catSelectable)) {
+                        e.preventDefault();
                         manageCategorydropdownItems(
                                 e,
                                 catSelected,
