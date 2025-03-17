@@ -21,34 +21,34 @@
  */
 
 export default {
-    courseView: {
-        region: '[data-region="courses-view"]',
-        regionContent: '[data-region="course-view-content"]'
-    },
-    FILTERS: '[data-region="filter"]',
-    FILTER_OPTION: '[data-filter]',
-    DISPLAY_OPTION: '[data-display-option]',
-    ACTION_HIDE_COURSE: '[data-action="hide-course"]',
-    ACTION_SHOW_COURSE: '[data-action="show-course"]',
-    ACTION_ADD_FAVOURITE: '[data-action="add-favourite"]',
-    ACTION_REMOVE_FAVOURITE: '[data-action="remove-favourite"]',
-    FAVOURITE_ICON: '[data-region="favourite-icon"]',
-    ICON_IS_FAVOURITE: '[data-region="is-favourite"]',
-    ICON_NOT_FAVOURITE: '[data-region="not-favourite"]',
-    region: {
-        selectBlock: '[data-region="eledia_telc_coursesearch"]',
-        searchInput: '[data-action="search"]',
-        clearIcon: '[data-action="clearsearch"]',
-    },
-    cat: {
-        prevent: '.catprevent',
-        clearIcon: '[data-action="clearcatsearch"]',
-        input: '[data-action="catsearch"]',
-        search: '.categorysearch',
-        dropdown: '.dropdown-categories',
-        dropdownDiv: '.category-droprown-container',
-        selectableItem: 'category-selectable',
-        selectedItem: 'category-selected',
-        noItem: 'category-no',
-    },
+        courseView: {
+                region: '[data-region="courses-view"]',
+                regionContent: '[data-region="course-view-content"]'
+        },
+        FILTERS: '[data-region="filter"]',
+        FILTER_OPTION: '[data-filter]',
+        DISPLAY_OPTION: '[data-display-option]',
+        ACTION_HIDE_COURSE: '[data-action="hide-course"]',
+        ACTION_SHOW_COURSE: '[data-action="show-course"]',
+        ACTION_ADD_FAVOURITE: '[data-action="add-favourite"]',
+        ACTION_REMOVE_FAVOURITE: '[data-action="remove-favourite"]',
+        FAVOURITE_ICON: '[data-region="favourite-icon"]',
+        ICON_IS_FAVOURITE: '[data-region="is-favourite"]',
+        ICON_NOT_FAVOURITE: '[data-region="not-favourite"]',
+        region: {
+                selectBlock: '[data-region="eledia_telc_coursesearch"]',
+                searchInput: '[data-action="search"]',
+                clearIcon: '[data-action="clearsearch"]',
+        },
+        cat: {
+                prevent: '.catprevent',
+                clearIcon: '[data-action="clearcatsearch"]',
+                input: '[data-action="catsearch"]',
+                search: '.categorysearch',
+                dropdown: '.dropdown-categories',
+                dropdownDiv: '.category-droprown-container',
+                selectableItem: 'category-selectable',
+                selectedItem: 'category-selected',
+                noItem: 'category-no',
+        },
 };
