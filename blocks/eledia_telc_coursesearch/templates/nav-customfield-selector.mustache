@@ -21,8 +21,9 @@
 
     Example context (json):
     {
-        "customfieldid": 1,
-        "customfieldcount": false,
+        "id": 1,
+        "name": "Name of custom field",
+        "count": false,
         "customfieldselected": [],
         "customfieldselectable": [],
     }
@@ -31,7 +32,7 @@
 <div class="dropdown mb-1 me-1">
     <button id="groupingdropdown" type="button" class="btn btn-outline-secondary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" aria-label="{{#str}} aria:groupingdropdown, block_eledia_telc_coursesearch {{/str}}">
         <span data-active-item-text>
-            {{title}}
+            {{customfieldname}}
         </span>
     {{#count}}
         <span data-active-item-text class="customfield-count">
@@ -39,7 +40,7 @@
         </span>
     {{/count}}
     </button>
-    <ul class="dropdown-menu" role="menu" data-customfield-id="{{customfieldid}}" data-show-active-item data-skip-active-class="true" data-active-item-text aria-labelledby="groupingdropdown">
+    <ul class="dropdown-menu customfield-container" role="menu" data-customfield-id="{{customfieldid}}" data-show-active-item data-skip-active-class="true" data-active-item-text aria-labelledby="groupingdropdown">
         {{> block_eledia_telc_coursesearch/nav-customfield-dropdown }}
     </ul>
 </div>

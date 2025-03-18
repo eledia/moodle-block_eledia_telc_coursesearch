@@ -25,7 +25,7 @@
             {
                 "customfieldid": 1,
                 "id": 1,
-                "name": "customfieldname"
+                "name": "customfieldvalue"
             }
         ]
     },
@@ -34,7 +34,7 @@
             {
                 "customfieldid": 1,
                 "id": 2,
-                "name": "customfieldname"
+                "name": "customfieldvalue"
             }
         ]
     }
@@ -45,7 +45,7 @@
     </li>
     {{^customfieldsselected}}
         <li>
-            <a class="dropdown-item catprevent customfield-no" href="#" data-filter="grouping"
+            <a class="dropdown-item catprevent customfield-no" href="#"
                aria-label="{{#str}}aria:customfield, block_eledia_telc_coursesearch, {{name}}{{/str}}">
                 {{#str}} noitemsselected, block_eledia_telc_coursesearch {{/str}}
             </a>
@@ -53,14 +53,14 @@
     {{/customfieldsselected}}
     {{#customfieldsselected}}
         <li>
-            <a class="dropdown-item catprevent customfield-no" href="#" data-filter="grouping"
-               aria-label="{{#str}}aria:customfield, block_eledia_telc_coursesearch, {{name}}{{/str}}">
+            <a class="dropdown-item catprevent customfield-no" href="#" data-id="{{id}"
+               aria-label="{{#str}}removeallitems, block_eledia_telc_coursesearch, {{name}}{{/str}}">
                 {{#str}} removeallitems, block_eledia_telc_coursesearch {{/str}}
             </a>
         </li>
         <li>
-            <a class="dropdown-item" href="#" data-filter="grouping"
-               data-value="customfield" data-pref="customfield" data-customfieldvalue="{{value}}"
+            <a class="dropdown-item customfield-item" href="#"
+               data-value="customfield" data-pref="customfield" data-id="{{id}" data-customfield-id="{{customfieldid}"
                aria-label="{{#str}}aria:customfield, block_eledia_telc_coursesearch, {{name}}{{/str}}"
                aria-controls="courses-view-{{uniqid}}" role="menuitem" {{#active}}aria-current="true"{{/active}}>
                 {{name}}
@@ -72,7 +72,7 @@
     </li>
     {{^customfieldsselectables}}
         <li>
-            <a class="dropdown-item catprevent customfield-no" href="#" data-filter="grouping"
+            <a class="dropdown-item catprevent customfield-no" href="#"
                aria-label="{{#str}}aria:customfield, block_eledia_telc_coursesearch, {{name}}{{/str}}">
                 {{#str}} noitemsavailable, block_eledia_telc_coursesearch {{/str}}
             </a>
@@ -80,7 +80,7 @@
     {{/customfieldsselectables}}
     {{#customfieldsselectables}}
         <li>
-            <a class="dropdown-item" href="#" data-filter="grouping"
+            <a class="dropdown-item customfield-item" href="#" data-id="{{id}" data-customfield-id="{{customfieldid}"
                data-value="customfield" data-pref="customfield" data-customfieldvalue="{{value}}"
                aria-label="{{#str}}aria:customfield, block_eledia_telc_coursesearch, {{name}}{{/str}}"
                aria-controls="courses-view-{{uniqid}}" role="menuitem" {{#active}}aria-current="true"{{/active}}>
