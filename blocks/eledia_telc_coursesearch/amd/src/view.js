@@ -69,6 +69,7 @@ let catInit = false;
 
 let selectedCategories = [];
 let selectableCategories = [];
+let customfields = [];
 
 /**
  * Whether the summary display has been loaded.
@@ -93,8 +94,27 @@ const getFilterValues = root => {
                 grouping: courseRegion.attr('data-grouping'),
                 sort: courseRegion.attr('data-sort'),
                 displaycategories: courseRegion.attr('data-displaycategories'),
+                // TODO: Remove
                 customfieldname: courseRegion.attr('data-customfieldname'),
                 customfieldvalue: courseRegion.attr('data-customfieldvalue'),
+        };
+};
+
+/**
+ * Get filter values from DOM and global variables.
+ *
+ * @param {object} root The root element for the courses view.
+ * @return {filters} Set filters.
+ */
+const getAllFilterValues = root => {
+        const courseRegion = root.find(SELECTORS.courseView.region);
+        return {
+                display: courseRegion.attr('data-display'),
+                grouping: courseRegion.attr('data-grouping'),
+                sort: courseRegion.attr('data-sort'),
+                displaycategories: courseRegion.attr('data-displaycategories'),
+                customfields: customfields,
+                selectedCategories: selectedCategories,
         };
 };
 
@@ -114,6 +134,7 @@ const DEFAULT_PAGED_CONTENT_CONFIG = {
  * @return {promise} Resolved with an array of courses.
  */
 const getMyCourses = (filters, limit) => {
+        // TODO: More Params
         const params = {
                 offset: courseOffset,
                 limit: limit,
@@ -674,7 +695,7 @@ const itemsPerPageFunc = (pagingLimit, root) => {
  * @param {null|boolean} activeSearch Are we currently actively searching and building up search results?
  */
 const pageBuilder = (coursesData, currentPage, pageData, actions, activeSearch = null) => {
-        // TODO: Examine how mustache is populated.
+        // TODO: Include populating category search and custom fields.
         // If the courseData comes in an object then get the value otherwise it is a pure array.
         let courses = coursesData.courses ? coursesData.courses : coursesData;
         let nextPageStart = 0;
@@ -720,8 +741,6 @@ const pageBuilder = (coursesData, currentPage, pageData, actions, activeSearch =
 
         courseOffset = coursesData.nextoffset;
 };
-
-// TODO: Some function like the above to filter our category names and ids from the search results.
 
 /**
  * In cases when switching between regular rendering and search rendering we need to reset some variables.
@@ -846,6 +865,9 @@ const initializePagedContent = (root, promiseFunction, inputValue = null) => {
 
                                 // Get the current applied filters.
                                 const filters = getFilterValues(root);
+
+                                // TODO: exchange with original function.
+                                window.console.log(getAllFilterValues(root));
 
                                 // Call the curried function that'll handle the course promise and any manipulation of it.
                                 promiseFunction(filters, currentPage, pageData, actions, root, promises, limit, inputValue);
@@ -1084,6 +1106,7 @@ const manageCategorydropdownItems = (e, selected, selectable, dropdownDiv, dropd
  * @param {object} root The root element for the courses view.
  */
 export const init = root => {
+        // TODO: include course categories custom fields.
         root = $(root);
         loadedPages = [];
         lastPage = 0;
@@ -1109,6 +1132,7 @@ export const init = root => {
  * @param {Object} root The root element for the timeline view.
  */
 export const reset = root => {
+        // TODO: Include categories and custom fields. May be included automatically.
         if (loadedPages.length > 0) {
                 const filters = getFilterValues(root);
                 // If the display mode is changed to 'summary' but the summary display has not been loaded yet,
