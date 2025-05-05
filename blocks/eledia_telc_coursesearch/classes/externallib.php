@@ -343,8 +343,9 @@ class externallib extends external_api {
 	// INFO: There is no need to send data about which fields are selected because it can be managed stateful by frontend.
 
 	protected static function get_customfield_available_values(string $customfield_id, array $customfields) {
-		global $DB;
-		$insqls = [];
+		global $DB, $USER;
+		// $insqls = [];
+		$insqls = '';
 		$allparams = [];
 		foreach ($customfields as $customfield) {
 			if ($customfield['id'] === $customfield_id)
@@ -353,8 +354,11 @@ class externallib extends external_api {
 			[$insql, $params] = $DB->get_in_or_equal($customfield['values']);
 			$allparams = array_merge($allparams, $params);
 			$query = " AND ( cd.fieldid = $cid AND $insql ) ";
-			$insqls[] = $query;
+			// $insqls[] = $query;
+			$insqls .= $query;
 		}
+		$users_courses = enrol_get_all_users_courses($USER->id, false);
+		
 
         // $comparevalue = $DB->sql_compare_text('cd.value');
 		$course_ids = [];
@@ -366,6 +370,11 @@ class externallib extends external_api {
 			  AND cat.area = 'course'
 		      AND $insqls
         ";
+		$course_ids = $DB->get_records_sql($sql, $allparams);
+		$courseids_filtered = array_intersect($course_ids, array_keys($users_courses));
+		$customfield_values = $this->get_customfield_value_options($customfield_id, $courseids_filtered);
+		// TODO: Work on get_customfield_value_options() to get all the field values of the field in question.
+		// TODO: Then work on the course filter.
 
 		// Better use get_customfield_value_options() for this.
 		[$insql, $params] = $DB->get_in_or_equal((array) $course_ids);
@@ -377,10 +386,54 @@ class externallib extends external_api {
 					   ";
 	}
 
-	protected static function get_customfield_value_options($customfield_id) {
+	protected static function get_customfield_value_options(int $customfield_id, array $courseids) {
 		// See get_customfield_values_for_export() in main.php and get_config_for_external() in block_eledia...php
 		// Field identification is the field shortname.
 		// There should be a LIMIT which is checked in frontend for displaying "too many entries to display".
+        global $DB, $USER;
+
+        // Get the relevant customfield ID within the core_course/course component/area.
+		// TODO: Maybe the customfield ID is already provided, so this query is not needed.
+        $fieldid = $DB->get_field_sql("
+            SELECT f.id
+              FROM {customfield_field} f
+              JOIN {customfield_category} c ON c.id = f.categoryid
+             WHERE f.shortname = :shortname AND c.component = 'core_course' AND c.area = 'course'
+        ", ['shortname' => $this->customfiltergrouping]);
+        if (!$fieldid) {
+            return [];
+        }
+        $courses = enrol_get_all_users_courses($USER->id, false); // INFO: Maybe a settig would be useful to show only courses the user is enrlled in.
+        if (!$courses) {
+            return [];
+        }
+        list($csql, $params) = $DB->get_in_or_equal(array_keys($courses), SQL_PARAMS_NAMED);
+        $select = "instanceid $csql AND fieldid = :fieldid";
+        $params['fieldid'] = $fieldid;
+        $distinctablevalue = $DB->sql_compare_text('value');
+        $values = $DB->get_records_select_menu('customfield_data', $select, $params, '',
+            "DISTINCT $distinctablevalue, $distinctablevalue AS value2");
+        \core_collator::asort($values, \core_collator::SORT_NATURAL);
+        $values = array_filter($values);
+        if (!$values) {
+            return [];
+        }
+        $field = \core_customfield\field_controller::create($fieldid);
+        $isvisible = $field->get_configdata_property('visibility') == \core_course\customfield\course_handler::VISIBLETOALL;
+        // Only visible fields to everybody supporting course grouping will be displayed.
+		// TODO: Check if there are unsupported custom fields to be used.
+        if (!$field->supports_course_grouping() || !$isvisible) {
+            return []; // The field shouldn't have been selectable in the global settings, but just skip it now.
+        }
+        $values = $field->course_grouping_format_values($values);
+        $ret = [];
+        foreach ($values as $value => $name) {
+            $ret[] = (object)[
+                'name' => $name,
+                'value' => $value,
+            ];
+        }
+        return $ret;
 	}
 
     /**
