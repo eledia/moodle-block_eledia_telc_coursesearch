@@ -6,6 +6,9 @@ use core_external\external_function_parameters;
 use core_external\external_single_structure;
 use core_external\external_multiple_structure;
 use core_external\external_value;
+use core_course_category;
+use coursecat_helper;
+use moodle_url;
 use context_system;
 
 
@@ -342,41 +345,72 @@ class externallib extends external_api {
 	// INFO: Customfield queries are separate from course search. Two DB queries are required to populate a field through search.
 	// INFO: There is no need to send data about which fields are selected because it can be managed stateful by frontend.
 
-	protected static function get_customfield_available_values(string $customfield_id, array $customfields) {
+	protected static function get_filtered_courseids(array $customfields, array $categories = [],string $excludetype = 'customfield', string | int $excludevalue = 0) {
 		global $DB, $USER;
 		// $insqls = [];
+		// Build query for all courses that have the customfield selection minus the one in question.
 		$insqls = '';
 		$allparams = [];
+		$customfield_id = $excludetype === 'customfield' ? (string) $excludevalue : -1;
 		foreach ($customfields as $customfield) {
 			if ($customfield['id'] === $customfield_id)
 					continue;
 			$cid = $customfield['id'];
 			[$insql, $params] = $DB->get_in_or_equal($customfield['values']);
 			$allparams = array_merge($allparams, $params);
-			$query = " AND ( cd.fieldid = $cid AND $insql ) ";
+			$query = " AND ( cd.fieldid = $cid AND cd.value $insql ) ";
 			// $insqls[] = $query;
 			$insqls .= $query;
 		}
-		$users_courses = enrol_get_all_users_courses($USER->id, false);
+		// TODO: Builer for category filter.
+		$catids = [];
+		foreach ($categories as $category) {
+			if ($excludetype === 'categories')
+					break;
+			$catids = $category['id'];
+		}
+
+		// Expand query for categories.
+		[$insql, $params] = $DB->get_in_or_equal($catids);
+		$allparams = array_merge($allparams, $params);
+		$query = " AND c.category $insql ";
+		// $insqls[] = $query;
+		$insqls .= $query;
+        $chelper = new coursecat_helper();
+        // $chelper->set_show_courses(self::COURSECAT_SHOW_COURSES_EXPANDED)->
+        $chelper->set_show_courses(20)->
+                set_courses_display_options([
+				'recursive' => true,
+				'idonly' => true,
+				// 'limit' => $CFG->frontpagecourselimit,
+				//'viewmoreurl' => new moodle_url('/course/index.php'),
+				//'viewmoretext' => new lang_string('fulllistofcourses')
+			]);
+
+        $chelper->set_attributes(array('class' => 'frontpage-course-list-all'));
+        $users_courses = core_course_category::top()->get_courses($chelper->get_courses_display_options());
 		
 
         // $comparevalue = $DB->sql_compare_text('cd.value');
 		$course_ids = [];
+		// TODO: Account for parent categories. An extra self join query might be required.
         $sql = "
            SELECT DISTINCT c.id
              FROM {course} c
         LEFT JOIN {customfield_data} cd ON cd.instanceid = c.id
+		LEFT JOIN {customfield_field} f ON f.id = cd.fieldid
+		LEFT JOIN {customfield_category} cat ON cat.id = f.categoryid
 		    WHERE cat.component = 'core_course'
 			  AND cat.area = 'course'
-		      AND $insqls
+		      $insqls
         ";
 		$course_ids = $DB->get_records_sql($sql, $allparams);
+		// $courseids_filtered = array_intersect($course_ids, array_keys($users_courses)); // New method gives back array of ids.
 		$courseids_filtered = array_intersect($course_ids, array_keys($users_courses));
-		$customfield_values = $this->get_customfield_value_options($customfield_id, $courseids_filtered);
-		// TODO: Work on get_customfield_value_options() to get all the field values of the field in question.
-		// TODO: Then work on the course filter.
+		return $courseids_filtered;
 
 		// Better use get_customfield_value_options() for this.
+		/*
 		[$insql, $params] = $DB->get_in_or_equal((array) $course_ids);
 		$sql = "
 		   SELECT DISTINCT cd.fieldid, cd.value
@@ -384,30 +418,54 @@ class externallib extends external_api {
 		     JOIN {course} c ON cd.instanceid = c.id AND cd.value = :value
 			WHERE c.id $insql
 					   ";
+		*/
 	}
 
-	protected static function get_customfield_value_options(int $customfield_id, array $courseids) {
+	protected static function get_customfield_available_values(array $customfields, array $categories = [], string | int $customfield_id) {
+		$courseids = self::get_filtered_courseids($customfields, $categories, 'customfield', $customfield_id);
+		return self::get_customfield_value_options($customfield_id, $courseids);
+	}
+
+	protected static function get_available_categories(array $customfields): array {
+		global $DB;
+		$courseids = [];
+		$whereclause = '';
+		$inparams = null;
+
+		if (sizeof($customfields)) {
+			$courseids = self::get_filtered_courseids($customfields, [], 'categories');
+			[$insql, $params] = $DB->get_in_or_equal($courseids);
+			$whereclause = " WHERE c.id $insql ";
+		}
+
+		if (!sizeof($courseids))
+			return [];
+
+
+		$sql = "SELECT DISTINCT cat.* FROM {course_categories}
+			LEFT JOIN {course} c
+			ON c.category = cat.id
+			$whereclause
+			LIMIT 6
+			";
+		$categories = $DB->get_records_sql($sql, $params);
+		return $categories;
+	}
+
+	protected static function get_customfield_value_options(int | string $fieldid, array $courseids) {
 		// See get_customfield_values_for_export() in main.php and get_config_for_external() in block_eledia...php
 		// Field identification is the field shortname.
 		// There should be a LIMIT which is checked in frontend for displaying "too many entries to display".
         global $DB, $USER;
 
-        // Get the relevant customfield ID within the core_course/course component/area.
-		// TODO: Maybe the customfield ID is already provided, so this query is not needed.
-        $fieldid = $DB->get_field_sql("
-            SELECT f.id
-              FROM {customfield_field} f
-              JOIN {customfield_category} c ON c.id = f.categoryid
-             WHERE f.shortname = :shortname AND c.component = 'core_course' AND c.area = 'course'
-        ", ['shortname' => $this->customfiltergrouping]);
         if (!$fieldid) {
             return [];
         }
-        $courses = enrol_get_all_users_courses($USER->id, false); // INFO: Maybe a settig would be useful to show only courses the user is enrlled in.
-        if (!$courses) {
+        // $courses = enrol_get_all_users_courses($USER->id, false); // INFO: Maybe a settig would be useful to show only courses the user is enrlled in.
+        if (!$courseids) {
             return [];
         }
-        list($csql, $params) = $DB->get_in_or_equal(array_keys($courses), SQL_PARAMS_NAMED);
+        list($csql, $params) = $DB->get_in_or_equal($courseids, SQL_PARAMS_NAMED);
         $select = "instanceid $csql AND fieldid = :fieldid";
         $params['fieldid'] = $fieldid;
         $distinctablevalue = $DB->sql_compare_text('value');
