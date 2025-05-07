@@ -20,8 +20,8 @@ $functions = [
     ],
     'block_eledia_telc_coursesearch_get_available_categories' => [
         'classname' => 'block_eledia_telc_coursesearch\externallib',
-        'methodname' => 'get_categories',
-        'classpath' => 'course/externallib.php',
+        'methodname' => 'get_available_categories',
+        // 'classpath' => 'course/externallib.php',
         'description' => 'Return category details',
         'type' => 'read',
         // 'capabilities' => 'moodle/category:viewhiddencategories',
