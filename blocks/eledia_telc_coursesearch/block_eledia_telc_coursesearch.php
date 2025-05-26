@@ -46,12 +46,20 @@ class block_eledia_telc_coursesearch extends block_base {
      * @return stdClass contents of block
      */
     public function get_content() {
+		global $PAGE;
         if (isset($this->content)) {
             return $this->content;
         }
         $group = get_user_preferences('block_eledia_telc_coursesearch_user_grouping_preference');
         $sort = get_user_preferences('block_eledia_telc_coursesearch_user_sort_preference');
         $view = get_user_preferences('block_eledia_telc_coursesearch_user_view_preference');
+		$device = $PAGE->devicetypeinuse;
+		if ($device === 'mobile') {
+			$view = 'card';
+		} else {
+			$view = 'summary';
+		}
+        // $view = get_user_preferences('block_eledia_telc_coursesearch_user_view_preference');
         $paging = get_user_preferences('block_eledia_telc_coursesearch_user_paging_preference');
         $customfieldvalue = get_user_preferences('block_eledia_telc_coursesearch_user_grouping_customfieldvalue_preference');
 

@@ -40,8 +40,8 @@ if ($ADMIN->fulltree) {
             1));
 
     // Enable / Disable available layouts.
-    $choices = array(BLOCK_ETCOURSESEARCH_VIEW_CARD => get_string('card', 'block_eledia_telc_coursesearch'),
-            BLOCK_ETCOURSESEARCH_VIEW_LIST => get_string('list', 'block_eledia_telc_coursesearch'),
+    $choices = array(BLOCK_ETCOURSESEARCH_VIEW_CARD => get_string('list', 'block_eledia_telc_coursesearch'),
+            // BLOCK_ETCOURSESEARCH_VIEW_LIST => get_string('list', 'block_eledia_telc_coursesearch'),
             BLOCK_ETCOURSESEARCH_VIEW_SUMMARY => get_string('summary', 'block_eledia_telc_coursesearch'));
     $settings->add(new admin_setting_configmulticheckbox(
             'block_eledia_telc_coursesearch/layouts',
