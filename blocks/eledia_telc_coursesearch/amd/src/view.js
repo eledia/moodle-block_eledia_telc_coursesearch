@@ -1099,6 +1099,18 @@ const registerEventListeners = (root, page) => {
                 page);
         }
     });
+    // TODO: eventListener dies. second eventListener needs to be function and removed on click or to be global.
+    document.body.addEventListener('click', (e) => {
+        const expandLink = e.target;
+        if (expandLink.classList.contains('eledia-telc-expandsummary')) {
+            e.preventDefault();
+            const summary = e.target.nextElementSibling;
+            expandLink.classList.add('d-none');
+            summary.classList.remove('d-none');
+            summary.addEventListener('click', hideSummary);
+        }
+    });
+
 };
 
 /**
@@ -1130,6 +1142,16 @@ export const clearCatSearch = (clearCatIcon) => {
  */
 const activeSearch = (clearIcon) => {
     clearIcon.classList.remove('d-none');
+};
+
+/**
+ * Hide the course summary.
+ * @param {Object} e event.
+ */
+const hideSummary = (e) => {
+    e.currentTarget.classList.add('d-none');
+    e.currentTarget.removeEventListener('click', hideSummary);
+    e.currentTarget.previousElementSibling.classList.remove('d-none');
 };
 
 /**

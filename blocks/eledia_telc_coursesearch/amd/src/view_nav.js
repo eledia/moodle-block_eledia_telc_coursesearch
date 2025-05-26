@@ -122,6 +122,14 @@ const registerSelector = root => {
             const pref = option.attr('data-pref');
 
             root.find(SELECTORS.courseView.region).attr('data-display', option.attr('data-value'));
+            const elediaButtons = document.getElementsByClassName(SELECTORS.courseView.elediaButton);
+            elediaButtons.forEach(e => {
+                if (e.classList.contains('d-none')) {
+                    e.classList.remove('d-none');
+                } else {
+                    e.classList.add('d-none');
+                }
+            });
             updatePreferences(filter, pref);
             View.reset(root);
             data.originalEvent.preventDefault();
