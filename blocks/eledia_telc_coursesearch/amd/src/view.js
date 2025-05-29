@@ -629,50 +629,38 @@ const renderCourses = (root, coursesData) => {
  *
  * @param {string} dropdownContainer The categories element for the courses view.
  * @param {string} dropdown The categories element for the courses view.
- * @param {array} categoriesData containing array of returned courses.
+ * @param {array} categoriesData containing array of returned categories.
+ * @param {array} selectionsData containing array of selected categories.
  * @param {object} page The page object.
  * @return {promise} jQuery promise resolved after rendering is complete.
  */
-const renderCategories = (dropdownContainer, dropdown, categoriesData, page) => { // eslint-disable-line
+const renderCategories = (dropdownContainer, dropdown, categoriesData, selectionsData, page) => { // eslint-disable-line
 
     // const filters = getFilterValues(categories);
 
     const template = 'block_eledia_telc_coursesearch/nav-category-dropdown';
 
-    if (!categoriesData) {
-        // TODO: Make function for empty result or solve it here.
-        window.console.log('!categoriesData');
-        window.console.log(categoriesData);
-        // return noCoursesRender(categories);
-    } else {
-        // TODO: Render template with data. Mustache template should be able to make the data work by itself.
-        // Sometimes we get weird objects coming after a failed search, cast to ensure typing functions.
-        //if (Array.isArray(categoriesData.data) === false) {
-        //        categoriesData.data = Object.values(categoriesData.data);
-        //}
-        // Whether the course category should be displayed in the course item.
-        // if (categoriesData.data.length) {
-        if (categoriesData) {
-            // NOTE: Render function for mustache.
-            window.console.log('render categoriesData');
-            return Templates.renderForPromise(template, {
-                categories: categoriesData,
-            }).then(({ html, js }) => {
-                window.console.log('replaceNodeContents');
-                window.console.log(html);
-                window.console.log(js);
-                const renderResult = Templates.replaceNodeContents(dropdownContainer, html, js);
-                const catDropdown = page.querySelector(dropdown);
-                catDropdown.style.display = 'block';
-                return renderResult;
-            }).catch(error => displayException(error));
-
-        } else {
-            window.console.log('no render categoriesData false');
-            // return noCoursesRender(categories);
-            return false;
-        }
-    }
+    // TODO: Render template with data. Mustache template should be able to make the data work by itself.
+    // Sometimes we get weird objects coming after a failed search, cast to ensure typing functions.
+    //if (Array.isArray(categoriesData.data) === false) {
+    //        categoriesData.data = Object.values(categoriesData.data);
+    //}
+    // Whether the course category should be displayed in the course item.
+    // if (categoriesData.data.length) {
+    // NOTE: Render function for mustache.
+    window.console.log('render categoriesData');
+    return Templates.renderForPromise(template, {
+        categories: categoriesData,
+        catselections: selectionsData,
+    }).then(({ html, js }) => {
+        window.console.log('replaceNodeContents');
+        window.console.log(html);
+        window.console.log(js);
+        const renderResult = Templates.replaceNodeContents(dropdownContainer, html, js);
+        const catDropdown = page.querySelector(dropdown);
+        catDropdown.style.display = 'block';
+        return renderResult;
+    }).catch(error => displayException(error));
 };
 
 /**
@@ -856,7 +844,14 @@ const catSearchFunctionality = () => {
         ).then(categoriesData => {
             // NOTE: Here it goes.
             selectableCategories = categoriesData;
-            return renderCategories(dropdownContainer, dropdown, categoriesData, page);
+            selectedCategories.forEach((selected) => {
+                const categoryIndex = selectableCategories.findIndex(item => item.id == selected.id);
+                if (categoryIndex !== -1) {
+                    selectableCategories.splice(categoryIndex, (categoryIndex + 1));
+                }
+            });
+            //return renderCategories(dropdownContainer, dropdown, categoriesData, page);
+            return renderCategories(dropdownContainer, dropdown, selectableCategories, selectedCategories, page);
             //pageBuilder(categoriesData, actions);
             //return renderCategories(root, loadedPages[currentPage]);
         }).catch(Notification.exception);
