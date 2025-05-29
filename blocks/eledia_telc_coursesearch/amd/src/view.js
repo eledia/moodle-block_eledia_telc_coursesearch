@@ -1023,6 +1023,16 @@ const registerEventListeners = (root, page) => {
         catinput.value = '';
         catinput.focus();
         clearCatSearch(clearCatIcon);
+        initializeCategorySearchContent(
+            SELECTORS.cat.dropdownDiv,
+            SELECTORS.cat.dropdown,
+            catSearchFunctionality(),
+            page,
+            '',
+            selectableCategories,
+            selectedCategories,
+            customfields,
+            selectedCustomfields);
     });
 
     input.addEventListener('input', debounce(() => {
