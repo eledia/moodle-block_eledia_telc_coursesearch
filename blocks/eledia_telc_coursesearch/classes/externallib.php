@@ -344,11 +344,77 @@ class externallib extends external_api {
 		}
 	}
 
+	public static function get_courseview(array $data) {
+		global $DB;
+		\tool_eledia_scripts\util::debug_out("data\n", 'viewdbg.txt');
+		\tool_eledia_scripts\util::debug_out(var_export($data, true). "\n", 'viewdbg.txt');
+		$courseids = [];
+		$searchdata = [];
+		foreach ($data as $key => $value) {
+			[$name, $filterdata] = match ($value['key']) {
+				'selectedCategories' => ['categories', $value['customfields']],
+				'selectedCustomfields' => ['customfields', $value['customfields']],
+				// 'searchterm' => ['searchterm', $value['searchterm']],
+				'name' => ['searchterm', $value['value']],
+				'limit' => ['limit', $value['value']],
+				'offset' => ['offset', $value['value']],
+				default => ['null', 'null'],
+			};
+			$searchdata[$name] = $filterdata;
+		}
+		\tool_eledia_scripts\util::debug_out("searchdata\n", 'viewdbg.txt');
+		\tool_eledia_scripts\util::debug_out(var_export($searchdata, true). "\n", 'viewdbg.txt');
+		$customfields = array_map('self::filterparams', $searchdata['customfields']);
+		$categories = array_map('self::filterparams', $searchdata['categories']);
+		$courseids = self::get_filtered_courseids($customfields, $categories, $searchdata['searchterm'], '', 0, $searchdata['limit'], $searchdata['offset']);
+		if (!sizeof($courseids))
+			return self::zero_response();
+		[$insql, $inparams] = $DB->get_in_or_equal($courseids);
+		$sql = "
+		SELECT * from {course}
+		WHERE id $insql
+		";
+		$courses = $DB->get_records_sql($sql, $inparams);
+		\tool_eledia_scripts\util::debug_out("courseview end\n", 'viewdbg.txt');
+		// return self::get_courses_rendered($courses, $searchdata['offset']);
+		return self::get_courses_rendered($courses, 0);
+	}
+	public static function filterparams(array $d) {
+		return $d['id'];
+	}
+
+	public static function get_courseview_parameters() {
+		return self::get_available_parameters();
+	}
+	
+	public static function zero_response(): array {
+		$result = [
+			'courses' => [],
+			'nextoffset' => 0,
+		];
+		return $result;
+	}
+
+    /**
+     * Returns description of method result value
+     *
+     * @return \core_external\external_description
+     */
+    public static function get_courseview_returns() {
+        return new external_single_structure(
+            array(
+                'courses' => new external_multiple_structure(course_summary_exporter::get_read_structure(), 'Course'),
+                'nextoffset' => new external_value(PARAM_INT, 'Offset for the next request')
+            )
+        );
+    }
+
 	// INFO: Customfield queries are separate from course search. Two DB queries are required to populate a field through search.
 	// INFO: There is no need to send data about which fields are selected because it can be managed stateful by frontend.
 
-	protected static function get_filtered_courseids(array $customfields, array $categories = [],string $excludetype = 'customfield', string | int $excludevalue = 0) {
+	protected static function get_filtered_courseids(array $customfields, array $categories = [], string $searchterm = '', string $excludetype = 'customfield', string | int $excludevalue = 0, int $limit = 0, int $offset = 0) {
 		global $DB, $USER;
+		self::validate_context(\context_user::instance($USER->id));
 		// $insqls = [];
 		// Build query for all courses that have the customfield selection minus the one in question.
 		$insqls = '';
@@ -368,7 +434,7 @@ class externallib extends external_api {
 		}
 		\tool_eledia_scripts\util::debug_out( "params1:\n", 'catdebg.txt');
 		\tool_eledia_scripts\util::debug_out($allparams . "\n", 'catdebg.txt');
-		// TODO: Builder for category filter.
+		// Builder for category filter.
 		$catids = [];
 		foreach ($categories as $category) {
 			if ($excludetype === 'categories')
@@ -413,6 +479,20 @@ class externallib extends external_api {
 			  AND cat.area = 'course'
 		      $insqls
         ";
+		if (!empty($searchterm)) {
+			$allparams[] = "%$searchterm%";
+			$allparams[] = "%$searchterm%";
+			$sql .= " AND (c.fullname ILIKE ? OR c.shortname ILIKE ?) ";
+		}
+
+		if ($limit) {
+			$sql .= "
+			LIMIT ?
+			OFFSET ?
+			";	
+			$allparams[] = $limit;
+			$allparams[] = $offset;
+		}
 		\tool_eledia_scripts\util::debug_out($sql . "\n", 'catdebg.txt');
 		\tool_eledia_scripts\util::debug_out(var_export($allparams, true). "\n", 'catdebg.txt');
 		// $course_ids = array_keys((array) $DB->get_records_sql($sql, $allparams));
@@ -440,11 +520,39 @@ class externallib extends external_api {
 					   ";
 		*/
 	}
+	
+	protected static function get_courses_rendered(array $courses, int $offset): array {
+        global $PAGE;
+		
+        $renderer = $PAGE->get_renderer('core');
+        $formattedcourses = array_map(function($course) use ($renderer) {
+            if ($course == null) {
+                return;
+            }
+            \context_helper::preload_from_record($course);
+            $context = \context_course::instance($course->id);
+            $exporter = new course_summary_exporter($course, ['context' => $context]);
+            return $exporter->export($renderer);
+        }, $courses);
+
+        $formattedcourses = array_filter($formattedcourses, function($course) {
+            if ($course != null) {
+                return $course;
+            }
+        });
+
+		$result = [
+            'courses' => $formattedcourses,
+            'nextoffset' => $offset + sizeof($formattedcourses)
+        ];
+		return $result;
+
+	}
 
 	// TODO: Change search for array only.
 	// protected static function get_customfield_available_values(array $customfields) {
 	protected static function get_customfield_available_values(array $customfields, array $categories = [], string | int $customfield_id) {
-		$courseids = self::get_filtered_courseids($customfields, $categories, 'customfield', $customfield_id);
+		$courseids = self::get_filtered_courseids($customfields, $categories, '', 'customfield', $customfield_id);
 		return self::get_customfield_value_options($customfield_id, $courseids);
 	}
 
@@ -453,7 +561,7 @@ class externallib extends external_api {
      *
      * @return external_function_parameters
      */
-    public static function get_available_categories_parameters() {
+    public static function get_available_parameters() {
         return new external_function_parameters(
             array(
                 'criteria' => new external_multiple_structure(
@@ -493,6 +601,15 @@ class externallib extends external_api {
             )
         );
     }
+
+    /**
+     * Returns description of method parameters
+     *
+     * @return external_function_parameters
+     */
+    public static function get_available_categories_parameters() {
+		return self::get_available_parameters();
+	}
 	
     /**
      * Returns description of method result value
@@ -520,13 +637,14 @@ class externallib extends external_api {
 			\tool_eledia_scripts\util::debug_out( var_export($val, true) . "\n", 'catdebg.txt');
 			// $customfields[] = array_splice($searchdata['criteria'][$key];
 			if ($val['key'] !== 'name') {
-				unset($searchdata[$key]);
+				// unset($searchdata[$key]);
 				continue;
 			}
 			$searchterm = $val['value'];
+			unset($searchdata[$key]);
 		}
 
-		if (sizeof($searchdata) && sizeof($courseids = self::get_filtered_courseids([], [], 'categories'))) {
+		if (sizeof($searchdata) && sizeof($courseids = self::get_filtered_courseids([], [], '', 'categories'))) {
 			// $courseids = self::get_filtered_courseids($searchdata, [], 'categories');
 			// $courseids = self::get_filtered_courseids([], [], 'categories');
 			[$insql, $params] = $DB->get_in_or_equal($courseids);

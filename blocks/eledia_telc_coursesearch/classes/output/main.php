@@ -31,6 +31,7 @@ use templatable;
 use stdClass;
 
 require_once($CFG->dirroot . '/blocks/eledia_telc_coursesearch/lib.php');
+require_once($CFG->dirroot . '/course/renderer.php');
 
 /**
  * Class containing data for my overview block.
@@ -461,9 +462,19 @@ class main implements renderable, templatable {
         } else {
             $sort = $this->sort == BLOCK_ETCOURSESEARCH_SORTING_TITLE ? 'fullname' : 'ul.timeaccess desc';
         }
+        $chelper = new \coursecat_helper();
+        $chelper->set_show_courses(20)->
+                set_courses_display_options([
+				'recursive' => true,
+				'idonly' => true,
+			]);
+
+        $chelper->set_attributes(array('class' => 'frontpage-course-list-all'));
+        $users_courses = \core_course_category::top()->get_courses($chelper->get_courses_display_options());
 
         $defaultvariables = [
-            'totalcoursecount' => count(enrol_get_all_users_courses($USER->id, true)),
+            // 'totalcoursecount' => count(enrol_get_all_users_courses($USER->id, true)),
+            'totalcoursecount' => count($users_courses),
             'nocoursesimg' => $nocoursesurl,
             'newcourseurl' => $newcourseurl,
             'grouping' => $this->grouping,
