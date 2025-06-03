@@ -84,6 +84,7 @@ let selectableCategories = [];
  */
 let customfields = [];
 let selectedCustomfields = [];
+let searchTerm = '';
 
 /**
  * Whether the summary display has been loaded.
@@ -145,9 +146,10 @@ const DEFAULT_PAGED_CONTENT_CONFIG = {
  *
  * @param {object} filters The filters for this view.
  * @param {int} limit The number of courses to show.
+ * @param {object} searchParams The params.
  * @return {promise} Resolved with an array of courses.
  */
-const getMyCourses = (filters, limit) => {
+const getMyCourses = (filters, limit, searchParams) => {
     // TODO: More Params
     const params = {
         offset: courseOffset,
@@ -163,7 +165,8 @@ const getMyCourses = (filters, limit) => {
     } else {
         params.requiredfields = Repository.CARDLIST_REQUIRED_FIELDS;
     }
-    return Repository.getEnrolledCoursesByTimeline(params);
+    // return Repository.getEnrolledCoursesByTimeline(searchParams);
+    return Repository.getEnrolledCoursesByTimeline(searchParams);
 };
 
 /**
@@ -191,7 +194,8 @@ const getSearchMyCourses = (filters, limit, searchValue) => {
         params.requiredfields = Repository.CARDLIST_REQUIRED_FIELDS;
         summaryDisplayLoaded = false;
     }
-    return Repository.getEnrolledCoursesByTimeline(params);
+    // return Repository.getEnrolledCoursesByTimeline(params);
+    return Repository.getEnrolledCoursesByTimeline(searchValue);
 };
 
 /**
@@ -248,6 +252,50 @@ const getSearchCategories = (key,
         addsubcategories: subCategories,
     };
     return Repository.getCategories(params);
+};
+
+/**
+ * Get params for search
+ *
+ * @param {int} limit
+ *
+ * @return {Object} The favourite icon container
+ */
+const getParams = (limit = 0) => {
+    const params = {
+        criteria: [
+            {
+                key: 'name',
+                value: searchTerm,
+            },
+            //{
+            //    key: 'categories',
+            //    customfields: selectedCategories,
+            //},
+            {
+                key: 'selectedCategories',
+                customfields: selectedCategories,
+            },
+            //{
+            //    key: 'customfields',
+            //    customfields: selectedCustomfields,
+            //},
+            {
+                key: 'selectedCustomfields',
+                customfields: selectedCustomfields,
+            },
+            {
+                key: 'limit',
+                value: limit,
+            },
+            {
+                key: 'offset',
+                value: courseOffset,
+            },
+        ],
+        addsubcategories: true,
+    };
+    return params;
 };
 
 /**
@@ -788,14 +836,15 @@ const resetGlobals = () => {
 /**
  * The default functionality of fetching paginated courses without special handling.
  *
- * @return {function(Object, Object, Object, Object, Object, Promise, Number): void}
+ * @return {function(Object, Object, Object, Object, Object, Promise, Number, Object): void}
  */
 const standardFunctionalityCurry = () => {
     resetGlobals();
-    return (filters, currentPage, pageData, actions, root, promises, limit) => {
+    return (filters, currentPage, pageData, actions, root, promises, limit, searchParams) => {
         const pagePromise = getMyCourses(
             filters,
-            limit
+            limit,
+            searchParams
         ).then(coursesData => {
             pageBuilder(coursesData, currentPage, pageData, actions);
             return renderCourses(root, loadedPages[currentPage]);
@@ -868,8 +917,9 @@ const catSearchFunctionality = () => {
  * @param {object} root The root element for the courses view.
  * @param {function} promiseFunction How do we fetch the courses and what do we do with them?
  * @param {null | string} inputValue What to search for
+ * @param {object} params The params
  */
-const initializePagedContent = (root, promiseFunction, inputValue = null) => {
+const initializePagedContent = (root, promiseFunction, inputValue = null, params) => {// eslint-disable-line
     const pagingLimit = parseInt(root.find(SELECTORS.courseView.region).attr('data-paging'), 10);
     let itemsPerPage = itemsPerPageFunc(pagingLimit, root);
 
@@ -914,7 +964,7 @@ const initializePagedContent = (root, promiseFunction, inputValue = null) => {
                 window.console.log(getAllFilterValues(root));
 
                 // Call the curried function that'll handle the course promise and any manipulation of it.
-                promiseFunction(filters, currentPage, pageData, actions, root, promises, limit, inputValue);
+                promiseFunction(filters, currentPage, pageData, actions, root, promises, limit, params);
             });
             return promises;
         },
@@ -1015,11 +1065,13 @@ const registerEventListeners = (root, page) => {
 
     clearIcon.addEventListener('click', () => {
         input.value = '';
+        searchTerm = '';
         input.focus();
         clearSearch(clearIcon, root);
     });
 
     clearCatIcon.addEventListener('click', () => {
+        window.console.log('CLICKED clearCatIcon');
         catinput.value = '';
         catinput.focus();
         clearCatSearch(clearCatIcon);
@@ -1037,10 +1089,12 @@ const registerEventListeners = (root, page) => {
 
     input.addEventListener('input', debounce(() => {
         if (input.value === '') {
+            searchTerm = '';
             clearSearch(clearIcon, root);
         } else {
             activeSearch(clearIcon);
-            initializePagedContent(root, searchFunctionalityCurry(), input.value.trim());
+            searchTerm = input.value.trim();
+            initializePagedContent(root, searchFunctionalityCurry(), input.value.trim(), getParams());
         }
     }, 1000));
 
@@ -1104,6 +1158,8 @@ const registerEventListeners = (root, page) => {
                 SELECTORS.cat.dropdown,
                 catSearchFunctionality(),
                 page);
+            // TODO: Initialize search on *every* change.
+            initializePagedContent(root, searchFunctionalityCurry(), input.value.trim(), getParams());
         }
     });
 
@@ -1171,7 +1227,7 @@ const manageCategorydropdownCollapse = (e) => {
     const catDropdown = page.querySelector(SELECTORS.cat.dropdown);
     if (!e.target.classList.contains('catprevent') && !e.target.classList.contains('fa-xmark')) {
         catDropdown.style.display = 'none';
-    } else {
+    } else if (e.target.classList.contains('catprevent') && !e.target.classList.contains('fa-xmark')) {
         catDropdown.style.display = 'block';
     }
 
@@ -1229,7 +1285,7 @@ export const init = root => {
         root.attr('data-init', true);
     }
 
-    initializePagedContent(root, standardFunctionalityCurry());
+    initializePagedContent(root, standardFunctionalityCurry(), null, getParams());
 };
 
 /**

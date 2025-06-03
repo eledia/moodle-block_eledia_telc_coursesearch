@@ -38,7 +38,8 @@ import Ajax from 'core/ajax';
  */
 export const getEnrolledCoursesByTimeline = args => {
     const request = {
-        methodname: 'core_course_get_enrolled_courses_by_timeline_classification',
+        // methodname: 'core_course_get_enrolled_courses_by_timeline_classification',
+        methodname: 'block_eledia_telc_coursesearch_get_courseview',
         args: args
     };
 
