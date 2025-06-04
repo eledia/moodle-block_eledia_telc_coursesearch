@@ -268,18 +268,10 @@ const getParams = (limit = 0) => {
                 key: 'name',
                 value: searchTerm,
             },
-            //{
-            //    key: 'categories',
-            //    customfields: selectedCategories,
-            //},
             {
                 key: 'selectedCategories',
-                customfields: selectedCategories,
+                categories: selectedCategories,
             },
-            //{
-            //    key: 'customfields',
-            //    customfields: selectedCustomfields,
-            //},
             {
                 key: 'selectedCustomfields',
                 customfields: selectedCustomfields,
