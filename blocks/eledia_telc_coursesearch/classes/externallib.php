@@ -387,6 +387,7 @@ class externallib extends external_api {
 				'selectedCustomfields' => ['customfields', $value['customfields']],
 				// 'searchterm' => ['searchterm', $value['searchterm']],
 				'name' => ['searchterm', $value['value']],
+				'categoryName' => ['catsearchterm', $value['value']],
 				'limit' => ['limit', $value['value']],
 				'offset' => ['offset', $value['value']],
 				default => ['null', 'null'],
@@ -631,40 +632,25 @@ class externallib extends external_api {
 		return core_course_external::get_categories_returns();
     }
 
-	public static function get_available_categories(array $searchdata): array {
+	public static function get_available_categories(array $data): array {
 		global $DB;
 		$courseids = [];
 		$whereclause = '';
 		$params = null;
-		$customfields = [];
-		$inparams = null;
-		$searchterm = '';
 
+
+		[$searchdata, $customfields, $categories] = self::remap_searchdata($data);
 		\tool_eledia_scripts\util::debug_out( "Category query:\n", 'catdebg.txt');
 		\tool_eledia_scripts\util::debug_out( var_export($searchdata, true) . "\n", 'catdebg.txt');
 		\tool_eledia_scripts\util::debug_out( "foreach:\n", 'catdebg.txt');
-		// foreach ($searchdata['criteria'] as $key => $val) {
-		foreach ($searchdata as $key => $val) {
-			\tool_eledia_scripts\util::debug_out( var_export($val, true) . "\n", 'catdebg.txt');
-			// $customfields[] = array_splice($searchdata['criteria'][$key];
-			if ($val['key'] !== 'name') {
-				// unset($searchdata[$key]);
-				continue;
-			}
-			$searchterm = $val['value'];
-			unset($searchdata[$key]);
-		}
-
-		if (sizeof($searchdata) && sizeof($courseids = self::get_filtered_courseids([], [], '', 'categories'))) {
-			// $courseids = self::get_filtered_courseids($searchdata, [], 'categories');
-			// $courseids = self::get_filtered_courseids([], [], 'categories');
+		if (sizeof($searchdata) && sizeof($courseids = self::get_filtered_courseids($customfields, $categories, $searchdata['searchterm'], 'categories'))) {
 			[$insql, $params] = $DB->get_in_or_equal($courseids);
 			$whereclause = " WHERE c.id $insql ";
 		}
 
 		if (!sizeof($courseids))
 			return [];
-
+		$searchterm = $searchdata['catsearchterm'];
 		if (!empty($searchterm)) {
 			$params[] = "%$searchterm%";
 			$whereclause .= " AND cat.name ILIKE ? ";
