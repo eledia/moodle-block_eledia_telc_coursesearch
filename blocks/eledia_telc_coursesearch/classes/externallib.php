@@ -349,23 +349,7 @@ class externallib extends external_api {
 		\tool_eledia_scripts\util::debug_out("data\n", 'viewdbg.txt');
 		\tool_eledia_scripts\util::debug_out(var_export($data, true). "\n", 'viewdbg.txt');
 		$courseids = [];
-		$searchdata = [];
-		foreach ($data as $key => $value) {
-			[$name, $filterdata] = match ($value['key']) {
-				'selectedCategories' => ['categories', $value['categories']],
-				'selectedCustomfields' => ['customfields', $value['customfields']],
-				// 'searchterm' => ['searchterm', $value['searchterm']],
-				'name' => ['searchterm', $value['value']],
-				'limit' => ['limit', $value['value']],
-				'offset' => ['offset', $value['value']],
-				default => ['null', 'null'],
-			};
-			$searchdata[$name] = $filterdata;
-		}
-		\tool_eledia_scripts\util::debug_out("searchdata\n", 'viewdbg.txt');
-		\tool_eledia_scripts\util::debug_out(var_export($searchdata, true). "\n", 'viewdbg.txt');
-		$customfields = array_map('self::filterparams', $searchdata['customfields']);
-		$categories = array_map('self::filterparams', $searchdata['categories']);
+		[$searchdata, $customfields, $categories] = self::remap_searchdata($data);
 		$courseids = self::get_filtered_courseids($customfields, $categories, $searchdata['searchterm'], '', 0, $searchdata['limit'], $searchdata['offset']);
 		if (!sizeof($courseids))
 			return self::zero_response();
@@ -393,6 +377,25 @@ class externallib extends external_api {
 			'nextoffset' => 0,
 		];
 		return $result;
+	}
+	
+	public static function remap_searchdata(array $data): array {
+		$searchdata = [];
+		foreach ($data as $value) {
+			[$name, $filterdata] = match ($value['key']) {
+				'selectedCategories' => ['categories', $value['categories']],
+				'selectedCustomfields' => ['customfields', $value['customfields']],
+				// 'searchterm' => ['searchterm', $value['searchterm']],
+				'name' => ['searchterm', $value['value']],
+				'limit' => ['limit', $value['value']],
+				'offset' => ['offset', $value['value']],
+				default => ['null', 'null'],
+			};
+			$searchdata[$name] = $filterdata;
+		}
+		$customfields = array_map('self::filterparams', $searchdata['customfields']);
+		$categories = array_map('self::filterparams', $searchdata['categories']);
+		return [$searchdata, $customfields, $categories];
 	}
 
     /**
