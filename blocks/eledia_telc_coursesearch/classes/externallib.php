@@ -486,8 +486,8 @@ class externallib extends external_api {
 		if (!empty($searchterm)) {
 			$allparams[] = "%$searchterm%";
 			$allparams[] = "%$searchterm%";
-			$fullname_like = $DB->sql_like('c.fullname', '?');
-			$shortname_like = $DB->sql_like('c.shortname', '?');
+			$fullname_like = $DB->sql_like('c.fullname', '?', false);
+			$shortname_like = $DB->sql_like('c.shortname', '?', false);
 			// $sql .= " AND (c.fullname ILIKE ? OR c.shortname ILIKE ?) ";
 			$sql .= " AND ($fullname_like OR $shortname_like) ";
 		}
