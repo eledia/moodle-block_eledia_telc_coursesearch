@@ -65,27 +65,15 @@ let lastLimit = 0;
 
 let namespace = null;
 
-// let catInit = false;
-
 let selectedCategories = [];
 let selectableCategories = [];
-/**
- * Structure of elements:
- * {
- *     3: [
- *         {
- *             id: 20,
- *             name: 'name',
- *             value: 'value,
- *             displayValue: 'Display Value',
- *         },
- *     ],
- * }
- */
 let customfields = [];
+let filteredCustomfields = [];
 let selectedCustomfields = [];
 let searchTerm = '';
 let catSearchTerm = '';
+let courseInProgress = 'all';
+let currentCustomField = 0;
 
 /**
  * Whether the summary display has been loaded.
@@ -151,7 +139,6 @@ const DEFAULT_PAGED_CONTENT_CONFIG = {
  * @return {promise} Resolved with an array of courses.
  */
 const getMyCourses = (filters, limit, searchParams) => {
-    // TODO: More Params
     const params = {
         offset: courseOffset,
         limit: limit,
@@ -210,6 +197,16 @@ const getSearchCategories = () => {
 };
 
 /**
+ * Search for custom fields from backend.
+ *
+ * @return {promise} Resolved with an array of categories.
+ */
+const getSearchCustomfields = () => {
+    const params = getParams();
+    return Repository.getCustomfields(params);
+};
+
+/**
  * Get params for search
  *
  * @param {int} limit
@@ -232,8 +229,8 @@ const getParams = (limit = 0) => {
                 categories: selectedCategories,
             },
             {
-                key: 'selectedCustomfields',
-                customfields: selectedCustomfields,
+                key: 'currentCustomField',
+                value: currentCustomField,
             },
             {
                 key: 'limit',
@@ -243,10 +240,40 @@ const getParams = (limit = 0) => {
                 key: 'offset',
                 value: courseOffset,
             },
+            {
+                key: 'progress',
+                value: courseInProgress,
+            },
+            {
+                key: 'selectedCustomfields',
+                customfields: getCustomFields(),
+            },
         ],
         addsubcategories: true,
     };
     return params;
+};
+
+/**
+ * Get params for search
+ *
+ * @return {Object} The favourite icon container
+ */
+const getCustomFields = () => {
+    if (!selectedCustomfields.length) {
+        return [];
+    }
+    const customFields = selectedCustomfields.map((values, key) => {
+        if (!values || values === undefined) {
+            return null;
+        }
+        const customValues = {
+            fieldid: key,
+            fieldvalues: values.map(val => val.value),
+        };
+        return customValues;
+    }).filter(Boolean);
+    return customFields;
 };
 
 /**
@@ -633,19 +660,12 @@ const renderCourses = (root, coursesData) => {
  * @param {object} page The page object.
  * @return {promise} jQuery promise resolved after rendering is complete.
  */
-const renderCategories = (dropdownContainer, dropdown, categoriesData, selectionsData, page) => { // eslint-disable-line
+const renderCategories = (dropdownContainer, dropdown, categoriesData, selectionsData, page) => {
 
     // const filters = getFilterValues(categories);
 
     const template = 'block_eledia_telc_coursesearch/nav-category-dropdown';
 
-    // TODO: Render template with data. Mustache template should be able to make the data work by itself.
-    // Sometimes we get weird objects coming after a failed search, cast to ensure typing functions.
-    //if (Array.isArray(categoriesData.data) === false) {
-    //        categoriesData.data = Object.values(categoriesData.data);
-    //}
-    // Whether the course category should be displayed in the course item.
-    // if (categoriesData.data.length) {
     // NOTE: Render function for mustache.
     window.console.log('render categoriesData');
     return Templates.renderForPromise(template, {
@@ -658,6 +678,78 @@ const renderCategories = (dropdownContainer, dropdown, categoriesData, selection
         const renderResult = Templates.replaceNodeContents(dropdownContainer, html, js);
         const catDropdown = page.querySelector(dropdown);
         catDropdown.style.display = 'block';
+        return renderResult;
+    }).catch(error => displayException(error));
+};
+
+/**
+ * Render the categories in search dropdown.
+ * TODO: Implement
+ *
+ * @param {string} dropdownContainer The categories element for the courses view.
+ * @param {string} dropdown The categories element for the courses view.
+ * @param {array} categoriesData containing array of returned categories.
+ * @param {array} selectionsData containing array of selected categories.
+ * @param {object} page The page object.
+ * @return {promise} jQuery promise resolved after rendering is complete.
+ */
+/*
+const renderCustomfields = (dropdownContainer, dropdown, customfieldsData, selectionsData, page) => {
+
+    // const filters = getFilterValues(categories);
+
+    const template = 'block_eledia_telc_coursesearch/nav-customfield-dropdown';
+
+    // NOTE: Render function for mustache.
+    window.console.log('render customfieldsData');
+    return Templates.renderForPromise(template, {
+        customvalues: customfieldsData,
+        customselections: selectionsData,
+        customfieldid: currentCustomField,
+    }).then(({ html, js }) => {
+        window.console.log('replaceNodeContents');
+        window.console.log(html);
+        window.console.log(js);
+        const renderResult = Templates.replaceNodeContents(dropdownContainer, html, js);
+        const catDropdown = page.querySelector(dropdown);
+        catDropdown.style.display = 'block';
+        return renderResult;
+    }).catch(error => displayException(error));
+};
+*/
+
+/**
+ * Render the categories in search dropdown.
+ *
+ * @param {string} dropdownContainer The categories element for the courses view.
+ * @param {string} dropdown The categories element for the courses view.
+ * @param {array} customfieldsData containing array of returned categories.
+ * @param {array} selectionsData containing array of selected categories.
+ * @param {object} page The page object.
+ * @return {promise} jQuery promise resolved after rendering is complete.
+ */
+const renderCustomfields = (dropdownContainer, dropdown, customfieldsData, selectionsData, page) => { // eslint-disable-line
+
+    const template = 'block_eledia_telc_coursesearch/nav-customfield-dropdown';
+
+    // NOTE: Render function for mustache.
+    window.console.log('renderCustomfields start');
+    window.console.log(customfieldsData);
+    return Templates.renderForPromise(template, {
+        customvalues: customfieldsData,
+        customselections: selectionsData,
+        customfieldid: currentCustomField,
+    }).then(({ html, js }) => {
+        window.console.log('dropdownContainer');
+        window.console.log(dropdownContainer);
+        const renderResult = Templates.replaceNodeContents(dropdownContainer, html, js);
+        window.console.log('renderResult');
+        window.console.log(renderResult);
+        const cuDropdown = page.querySelector(dropdown);
+        window.console.log(dropdown);
+        window.console.log(cuDropdown);
+        cuDropdown.style.display = 'block';
+        window.console.log('renderCustomfields wnd');
         return renderResult;
     }).catch(error => displayException(error));
 };
@@ -727,7 +819,6 @@ const itemsPerPageFunc = (pagingLimit, root) => {
  * @param {null|boolean} activeSearch Are we currently actively searching and building up search results?
  */
 const pageBuilder = (coursesData, currentPage, pageData, actions, activeSearch = null) => {
-    // TODO: Include populating category search and custom fields.
     // If the courseData comes in an object then get the value otherwise it is a pure array.
     let courses = coursesData.courses ? coursesData.courses : coursesData;
     let nextPageStart = 0;
@@ -839,7 +930,7 @@ const catSearchFunctionality = () => {
             selectedCategories.forEach((selected) => {
                 const categoryIndex = selectableCategories.findIndex(item => item.id == selected.id);
                 if (categoryIndex !== -1) {
-                    selectableCategories.splice(categoryIndex, (categoryIndex + 1));
+                    selectableCategories.splice(categoryIndex, 1);
                 }
             });
             //return renderCategories(dropdownContainer, dropdown, categoriesData, page);
@@ -850,6 +941,45 @@ const catSearchFunctionality = () => {
 
         // promises.push(searchingPromise);
         // window.console.log(searchingPromise);
+        return searchingPromise;
+    };
+};
+
+/**
+ * Initialize the custom field searching functionality so we can call it when required.
+ *
+ * @return {function(Object): void}
+ */
+const customfieldSearchFunctionality = () => {
+    return (dropdownContainer, dropdown, page, searchterm) => {
+        const searchingPromise = getSearchCustomfields().then(customfieldsData => {
+            const noneOptionIndex = customfieldsData.findIndex(option => option.value === -1);
+            // TODO: Fields may have different methods of signaling 'select none' options. -1 might be a legit value.
+            if (noneOptionIndex !== -1) {
+                customfieldsData.splice(noneOptionIndex, 1);
+            }
+            customfields[currentCustomField] = customfieldsData;
+            if (selectedCustomfields[currentCustomField] === undefined) {
+                selectedCustomfields[currentCustomField] = [];
+            }
+            selectedCustomfields[currentCustomField]?.forEach((selected) => {
+                const customfieldIndex = customfields[currentCustomField].findIndex(item => item.value === selected.value);
+                if (customfieldIndex !== -1) {
+                    customfields[currentCustomField].splice(customfieldIndex, 1);
+                }
+            });
+            filteredCustomfields[currentCustomField] = customfields[currentCustomField];
+            if (searchterm.trim() !== '') {
+                filteredCustomfields[currentCustomField] = filteredCustomfields[currentCustomField].filter(
+                    item => item.name.toLowerCase().includes(searchterm.trim().toLowerCase()));
+            }
+            return renderCustomfields(dropdownContainer,
+                dropdown,
+                filteredCustomfields[currentCustomField],
+                selectedCustomfields[currentCustomField],
+                page);
+        }).catch(Notification.exception);
+
         return searchingPromise;
     };
 };
@@ -941,6 +1071,27 @@ const initializeCategorySearchContent = (dropdownContainer,
     window.console.log($categories);
 };
 
+/**
+ * Initialise the list of categories in the search dropdown.
+ * TODO: Implement.
+ *
+ * @param {string} dropdownContainer The dropdown container element.
+ * @param {string} dropdown The dropdown element for the search results.
+ * @param {function} promiseFunction How do we fetch the categories and what do we do with them?
+ * @param {object} page The page object.
+ * @param {string} searchterm The current searchterm.
+ */
+const initializeCustomfieldSearchContent = (dropdownContainer,
+    dropdown,
+    promiseFunction,
+    page,
+    searchterm) => {// eslint-disable-line
+    const $customfields = promiseFunction(dropdownContainer,
+        dropdown,
+        page,
+        searchterm);
+    window.console.log($customfields);
+};
 
 /**
  * Listen to, and handle events for the eledia_telc_coursesearch block.
@@ -990,9 +1141,15 @@ const registerEventListeners = (root, page) => {
     const input = page.querySelector(SELECTORS.region.searchInput);
     const clearIcon = page.querySelector(SELECTORS.region.clearIcon);
     const catinput = page.querySelector(SELECTORS.cat.input);
+    const customInputs = page.querySelectorAll(SELECTORS.customfields.input);
     const clearCatIcon = page.querySelector(SELECTORS.cat.clearIcon);
+    const clearCustomfieldIcons = page.querySelectorAll(SELECTORS.customfields.clearIcon);
+    const customClass = SELECTORS.customfields.searchfield;
     const catSelectable = SELECTORS.cat.selectableItem;
     const catSelected = SELECTORS.cat.selectedItem;
+    const customfieldSelectable = SELECTORS.customfields.selectableItem;
+    const customfieldSelected = SELECTORS.customfields.selectedItem;
+    const groupingFilter = page.querySelectorAll(SELECTORS.FILTER_GROUPING);
 
     clearIcon.addEventListener('click', () => {
         input.value = '';
@@ -1015,6 +1172,23 @@ const registerEventListeners = (root, page) => {
             selectedCategories);
     });
 
+    clearCustomfieldIcons.forEach(icon => {
+        currentCustomField = icon.dataset.customfieldid;
+        const customfieldInput = page.querySelector(customClass + currentCustomField);
+        icon.addEventListener('click', () => {
+            window.console.log('CLICKED clearCustomfieldIcon');
+            customfieldInput.value = '';
+            customfieldInput.focus();
+            clearCustomfieldSingleIconSearch(icon);
+            initializeCustomfieldSearchContent(
+                SELECTORS.customfields.dropdownDiv + currentCustomField,
+                SELECTORS.customfields.dropdown + currentCustomField,
+                customfieldSearchFunctionality(),
+                page,
+                '');
+        });
+    });
+
     input.addEventListener('input', debounce(() => {
         if (input.value === '') {
             searchTerm = '';
@@ -1026,17 +1200,59 @@ const registerEventListeners = (root, page) => {
         }
     }, 1000));
 
+    // Flow:
+    // eventListener
+    // initializeCustomfieldSearchContent()
+    // customfieldSearchFunctionality()
+    // renderCustomfields()
+    customInputs.forEach(i => {
+        i.addEventListener('click', (e) => {
+            currentCustomField = e.target.dataset.customfieldid;
+            const currentSearchterm = e.target.value.toLowerCase();
+            initializeCustomfieldSearchContent(
+                SELECTORS.customfields.dropdownDiv + currentCustomField,
+                SELECTORS.customfields.dropdown + currentCustomField,
+                customfieldSearchFunctionality(),
+                page,
+                currentSearchterm);
+        });
+        i.addEventListener('input', debounce((e) => {
+            currentCustomField = e.target.dataset.customfieldid;
+            const currentSearchterm = e.target.value.toLowerCase();
+            if (currentSearchterm === '') {
+                clearCustomfieldSearch(clearCustomfieldIcons);
+                manageCustomfielddropdownItems(
+                    e,
+                    customfieldSelected,
+                    customfieldSelectable,
+                    SELECTORS.customfields.dropdownDiv + currentCustomField,
+                    SELECTORS.customfields.dropdown + currentCustomField,
+                    customfieldSearchFunctionality(),
+                    page);
+            } else {
+                filteredCustomfields[currentCustomField] = filteredCustomfields[currentCustomField].filter(
+                    item => item.name.toLowerCase().includes(currentSearchterm.toLowerCase().trim()));
+                activeCustomfieldSearch(clearCustomfieldIcons);
+                manageCustomfielddropdownItems(
+                    e,
+                    customfieldSelected,
+                    customfieldSelectable,
+                    SELECTORS.customfields.dropdownDiv + currentCustomField,
+                    SELECTORS.customfields.dropdown + currentCustomField,
+                    customfieldSearchFunctionality(),
+                    page);
+            }
+        }, 1000));
+    });
+
     // Initialize category search dropdown on first click.
     catinput.addEventListener('click', () => {
-        // if (!catInit) {
         initializeCategorySearchContent(
             SELECTORS.cat.dropdownDiv,
             SELECTORS.cat.dropdown,
             catSearchFunctionality(),
             page,
             selectedCategories);
-        // catInit = true;
-        // }
     });
 
     catinput.addEventListener('input', debounce(() => {
@@ -1064,6 +1280,7 @@ const registerEventListeners = (root, page) => {
     }, 1000));
 
     document.body.addEventListener('click', manageCategorydropdownCollapse);
+    document.body.addEventListener('click', manageCustomfielddropdownCollapse);
 
     document.body.addEventListener('click', (e) => {
         if (e.target.classList.contains(catSelected) || e.target.classList.contains(catSelectable)) {
@@ -1075,6 +1292,23 @@ const registerEventListeners = (root, page) => {
                 SELECTORS.cat.dropdownDiv,
                 SELECTORS.cat.dropdown,
                 catSearchFunctionality(),
+                page);
+            // TODO: Initialize search on *every* change.
+            initializePagedContent(root, searchFunctionalityCurry(), input.value.trim(), getParams());
+        }
+    });
+
+    document.body.addEventListener('click', (e) => {
+        if (e.target.classList.contains(customfieldSelected) || e.target.classList.contains(customfieldSelectable)) {
+            e.preventDefault();
+            const currentId = e.target.dataset.customfieldid;
+            manageCustomfielddropdownItems(
+                e,
+                customfieldSelected,
+                customfieldSelectable,
+                SELECTORS.customfields.dropdownDiv + currentId,
+                SELECTORS.customfields.dropdown + currentId,
+                customfieldSearchFunctionality(),
                 page);
             // TODO: Initialize search on *every* change.
             initializePagedContent(root, searchFunctionalityCurry(), input.value.trim(), getParams());
@@ -1102,6 +1336,13 @@ const registerEventListeners = (root, page) => {
         }
     });
 
+    groupingFilter.forEach(filter => {
+        const filterType = filter.dataset.value;
+        filter.addEventListener('click', () => {
+            courseInProgress = filterType;
+        });
+    });
+
 };
 
 /**
@@ -1122,8 +1363,39 @@ export const clearSearch = (clearIcon, root) => {
  */
 export const clearCatSearch = (clearCatIcon) => {
     clearCatIcon.classList.add('d-none');
-    // TODO: Own init function if required.
-    // init(root);
+};
+
+/**
+ * Reset the search icon and trigger the init for the category search.
+ *
+ * @param {HTMLElement} clearCustomfieldIcons Our closing icon to manipulate.
+ */
+export const clearCustomfieldSearch = (clearCustomfieldIcons) => {
+    clearCustomfieldIcons.forEach(icon => {
+        if (icon.dataset.customfieldid === currentCustomField) {
+            icon.classList.add('d-none');
+        }
+    });
+};
+
+/**
+ * Reset the search icon and trigger the init for the category search.
+ *
+ * @param {HTMLElement} icon Our closing icon to manipulate.
+ */
+export const clearCustomfieldSingleIconSearch = icon => { icon.classList.add('d-none'); };
+
+/**
+ * Change the searching icon to its' active state. *
+ *
+ * @param {HTMLElement} clearCustomfieldIcons Our closing icon to manipulate.
+ */
+export const activeCustomfieldSearch = (clearCustomfieldIcons) => {
+    clearCustomfieldIcons.forEach(icon => {
+        if (icon.dataset.customfieldid === currentCustomField) {
+            icon.classList.remove('d-none');
+        }
+    });
 };
 
 /**
@@ -1168,10 +1440,10 @@ const manageCategorydropdownItems = (e, selected, selectable, dropdownDiv, dropd
     const categoryId = e.target.dataset.catId;
     if (e.target.classList.contains(selectable)) {
         const categoryIndex = selectableCategories.findIndex(value => value.id == categoryId);
-        selectedCategories.push(selectableCategories.splice(categoryIndex, (categoryIndex + 1))[0]);
+        selectedCategories.push(selectableCategories.splice(categoryIndex, 1)[0]);
     } else {
         const categoryIndex = selectedCategories.findIndex(value => value.id == categoryId);
-        selectableCategories.push(selectedCategories.splice(categoryIndex, (categoryIndex + 1))[0]);
+        selectableCategories.push(selectedCategories.splice(categoryIndex, 1)[0]);
     }
     return Templates.renderForPromise(template, {
         categories: selectableCategories,
@@ -1182,6 +1454,76 @@ const manageCategorydropdownItems = (e, selected, selectable, dropdownDiv, dropd
         catDropdown.style.display = 'block';
         return renderResult;
     }).catch(error => displayException(error));
+};
+
+/**
+ * Hide customfield dropdown if clicked outside customfield search.
+ *
+ */
+const manageCustomfielddropdownCollapse = () => {
+    const page = document.querySelector(SELECTORS.region.selectBlock);
+    const customfieldDropdowns = page.querySelectorAll(SELECTORS.customfields.dropdownAll);
+    customfieldDropdowns.forEach(dropdown => {
+        if (!dropdown.classList.contains(SELECTORS.customfields.dropdown + currentCustomField)) {
+            dropdown.style.display = 'none';
+        } else {
+            dropdown.style.display = 'block';
+        }
+    });
+
+};
+
+/**
+ * Hide customfield dropdown if clicked outside customfield search.
+ *
+ * @param {PointerEvent} e a click.
+ * @param {string} selected
+ * @param {string} selectable
+ * @param {string} dropdownDiv
+ * @param {string} dropdown
+ * @param {object} promiseFunction
+ * @param {object} page
+ **/
+const manageCustomfielddropdownItems = (e, selected, selectable, dropdownDiv, dropdown, promiseFunction, page) => {// eslint-disable-line
+    // const template = 'block_eledia_telc_coursesearch/nav-customfield-dropdown';
+    const customfieldValue = e.target.dataset.selectvalue;
+    const customfieldName = e.target.dataset.selectname;
+    const customfieldId = e.target.dataset.customfieldid;
+    window.console.log('manageCustomfielddropdownItems');
+    window.console.log(e);
+    window.console.log(customfieldId);
+    if (e.target.classList.contains(selectable)) {
+        const customfieldIndex = filteredCustomfields[customfieldId].findIndex(item => item.value == customfieldValue);
+        selectedCustomfields[customfieldId].push(filteredCustomfields[customfieldId].splice(customfieldIndex, 1)[0]);
+        selectedCustomfields[customfieldId].sort((a, b) => {
+            return ('' + a.name).localeCompare(b.name);
+        });
+        //filteredCustomfields[customfieldId].splice(
+        //    filteredCustomfields[customfieldId].findIndex(item => item.value == customfieldValue),
+        //    1);
+        window.console.log('selectable');
+        window.console.log(selectedCustomfields);
+    } else if (e.target.classList.contains(selected)) {
+        const customfieldIndex = selectedCustomfields[customfieldId].findIndex(item => item.value == customfieldValue);
+        const interchangedValue = selectedCustomfields[customfieldId].splice(customfieldIndex, 1)[0];
+        // customfields[customfieldId].push(interchangedValue);
+        const searchField = page.querySelector(".customsearch-" + customfieldId);
+        window.console.log('searchField');
+        window.console.log(searchField);
+        if (searchField.value === '' || customfieldName.toLowerCase().includes(searchField.value.trim().toLowerCase())) {
+            filteredCustomfields[customfieldId].push(interchangedValue);
+        }
+        filteredCustomfields[customfieldId].sort((a, b) => {
+            return ('' + a.name).localeCompare(b.name);
+        });
+        window.console.log('selected');
+        window.console.log(selectedCustomfields);
+    }
+    return renderCustomfields(dropdownDiv,
+        dropdown,
+        filteredCustomfields[customfieldId],
+        selectedCustomfields[customfieldId],
+        page);
 };
 
 /**

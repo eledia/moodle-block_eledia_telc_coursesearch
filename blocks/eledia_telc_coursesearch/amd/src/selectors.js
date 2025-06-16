@@ -29,6 +29,7 @@ export default {
     },
     FILTERS: '[data-region="filter"]',
     FILTER_OPTION: '[data-filter]',
+    FILTER_GROUPING: '[data-filter="grouping"]',
     DISPLAY_OPTION: '[data-display-option]',
     ACTION_HIDE_COURSE: '[data-action="hide-course"]',
     ACTION_SHOW_COURSE: '[data-action="show-course"]',
@@ -52,5 +53,15 @@ export default {
         selectableItem: 'category-selectable',
         selectedItem: 'category-selected',
         noItem: 'category-no',
+    },
+    customfields: {
+        clearIcon: '[data-action="clearcustomsearch"]',
+        input: '[data-action="customsearch"]',
+        searchfield: '.customsearch-',
+        dropdown: '.dropdown-customfields-',
+        dropdownAll: '.dropdown-menu-customfields',
+        dropdownDiv: '.customfield-dropdown-container-',
+        selectableItem: 'customfield-selectable',
+        selectedItem: 'customfield-selected',
     },
 };

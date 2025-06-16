@@ -65,6 +65,24 @@ export const getCategories = args => {
 };
 
 /**
+ * Retrieve a list of categories.
+ *
+ * @method getCategories
+ * @param {object} args The request arguments
+ * @return {promise} Resolved with an array of categories
+ */
+export const getCustomfields = args => {
+    // Some comment.
+    const request = {
+        //methodname: 'block_eledia_telc_coursesearch_get_categories',
+        methodname: 'block_eledia_telc_coursesearch_get_customfield_available_options',
+        args: args
+    };
+
+    return Ajax.call([request])[0];
+};
+
+/**
  * Set the favourite state on a list of courses.
  *
  * Valid args are:

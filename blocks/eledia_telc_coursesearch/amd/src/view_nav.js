@@ -34,7 +34,7 @@ import SELECTORS from 'block_eledia_telc_coursesearch/selectors';
  * @param {String} value The current preferred value.
  * @return {Promise}
  */
-const updatePreferences = (filter, value) => {
+const updatePreferences = (filter, value) => { // eslint-disable-line
     let type = null;
     if (filter === 'display') {
         type = 'block_eledia_telc_coursesearch_user_view_preference';
@@ -75,15 +75,15 @@ const registerSelector = root => {
             }
 
             const filter = option.attr('data-filter');
-            const pref = option.attr('data-pref');
+            const pref = option.attr('data-pref'); // eslint-disable-line
             const customfieldvalue = option.attr('data-customfieldvalue');
 
             root.find(SELECTORS.courseView.region).attr('data-' + filter, option.attr('data-value'));
-            updatePreferences(filter, pref);
+            // updatePreferences(filter, pref);
 
             if (customfieldvalue) {
                 root.find(SELECTORS.courseView.region).attr('data-customfieldvalue', customfieldvalue);
-                updatePreferences('customfieldvalue', customfieldvalue);
+                // updatePreferences('customfieldvalue', customfieldvalue);
             }
 
             // Reset the views.
@@ -118,8 +118,8 @@ const registerSelector = root => {
                 return;
             }
 
-            const filter = option.attr('data-display-option');
-            const pref = option.attr('data-pref');
+            const filter = option.attr('data-display-option'); // eslint-disable-line
+            const pref = option.attr('data-pref'); // eslint-disable-line
 
             root.find(SELECTORS.courseView.region).attr('data-display', option.attr('data-value'));
             const elediaButtons = document.getElementsByClassName(SELECTORS.courseView.elediaButton);
@@ -130,7 +130,7 @@ const registerSelector = root => {
                     e.classList.add('d-none');
                 }
             });
-            updatePreferences(filter, pref);
+            // updatePreferences(filter, pref);
             View.reset(root);
             data.originalEvent.preventDefault();
         }
