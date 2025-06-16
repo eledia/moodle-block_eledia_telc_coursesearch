@@ -333,6 +333,7 @@ class externallib extends external_api {
 
 
 	// Maybe not necessary.
+	// TODO: Remove?
 	public static function get_courses_for_user(array $category_ids = [], array $customfields = [], string $searchterm = '', int $category_contextid = 0) {
 		global $DB, $USER;
 		$where = 'c.id <> :siteid';
@@ -397,7 +398,7 @@ class externallib extends external_api {
 			};
 			$searchdata[$name] = $filterdata;
 		}
-		$customfields = array_map('self::filterparams', $searchdata['customfields']);
+		$customfields = $searchdata['customfields'];
 		$categories = array_map('self::filterparams', $searchdata['categories']);
 		return [$searchdata, $customfields, $categories];
 	}
@@ -423,31 +424,30 @@ class externallib extends external_api {
 	protected static function get_filtered_courseids(array $customfields, array $categories = [], string $searchterm = '', string $excludetype = 'customfield', string | int $excludevalue = 0, int $limit = 0, int $offset = 0, $contextids = false, $progress = 'all') {
 		global $DB, $USER;
 		self::validate_context(\context_user::instance($USER->id));
-		// $insqls = [];
 		// Build query for all courses that have the customfield selection minus the one in question.
 		$insqls = '';
+		$customsqls = [];
 		$allparams = [];
 		$customfield_id = $excludetype === 'customfield' ? (string) $excludevalue : -1;
 		foreach ($customfields as $customfield) {
-			if ($customfield['id'] === $customfield_id)
+			if ((int) $customfield['fieldid'] === (int) $customfield_id || !sizeof($customfield['fieldvalues'])) {
 					continue;
-			$cid = $customfield['id'];
-			[$insql, $params] = $DB->get_in_or_equal($customfield['values']);
-		\tool_eledia_scripts\util::debug_out( "params0:\n", 'catdebg.txt');
-		\tool_eledia_scripts\util::debug_out($params . "\n", 'catdebg.txt');
+			}
+			$cid = (int) $customfield['fieldid'];
+			[$insql, $params] = $DB->get_in_or_equal($customfield['fieldvalues']);
 			$allparams = array_merge($allparams, $params);
-			$query = " AND ( cd.fieldid = $cid AND cd.value $insql ) ";
+			$query = " ( cd.fieldid = $cid AND cd.value $insql ) ";
 			// $insqls[] = $query;
-			$insqls .= $query;
+			// $insqls .= $query;
+			$customsqls[] = $query;
 		}
-		\tool_eledia_scripts\util::debug_out( "params1:\n", 'catdebg.txt');
-		\tool_eledia_scripts\util::debug_out($allparams . "\n", 'catdebg.txt');
+		if (sizeof($customsqls)) 
+			$insqls = 'AND ( ' . implode(' OR ', $customsqls) . ' ) ';
+
 		// Builder for category filter.
 		if ($excludetype === 'categories')
 			$categories = [];
 
-		// TODO: Fix
-		// Expand query for categories.
 		if (sizeof($categories)) {
 			[$insql, $params] = $DB->get_in_or_equal($categories);
 			$allparams = array_merge($allparams, $params);
@@ -471,14 +471,16 @@ class externallib extends external_api {
         $users_courses = core_course_category::top()->get_courses($chelper->get_courses_display_options());
 		
 		$id_type = $contextids ? 'ctx.id' : 'c.id';
+		//throw new \Exception($id_type);
 
         // $comparevalue = $DB->sql_compare_text('cd.value');
 		$course_ids = [];
 		// TODO: Account for child categories. An extra self join query might be required.
+		$contextlevel = CONTEXT_COURSE;
         $sql = "
            SELECT DISTINCT $id_type
              FROM {course} c
-		LEFT JOIN {context} ctx ON c.id = ctx.instanceid
+		LEFT JOIN {context} ctx ON c.id = ctx.instanceid AND ctx.contextlevel = $contextlevel
         LEFT JOIN {customfield_data} cd ON cd.contextid = ctx.id
 		LEFT JOIN {customfield_field} f ON f.id = cd.fieldid
 		LEFT JOIN {customfield_category} cat ON cat.id = f.categoryid
@@ -518,21 +520,21 @@ class externallib extends external_api {
 			$allparams[] = $limit;
 			$allparams[] = $offset;
 		}
-		\tool_eledia_scripts\util::debug_out($sql . "\n", 'catdebg.txt');
-		\tool_eledia_scripts\util::debug_out(var_export($allparams, true). "\n", 'catdebg.txt');
-		// $course_ids = array_keys((array) $DB->get_records_sql($sql, $allparams));
-		$course_ids = $DB->get_records_sql($sql, $allparams);
-		$course_ids = array_keys($course_ids);
+		// throw new \Exception($sql . "#######\n" . var_export($allparams, true));
 
-		\tool_eledia_scripts\util::debug_out( "--------------\n", 'catdebg.txt');
-		\tool_eledia_scripts\util::debug_out(var_export($course_ids, true). "\n", 'catdebg.txt');
-		\tool_eledia_scripts\util::debug_out(var_export($users_courses, true). "\n", 'catdebg.txt');
-		\tool_eledia_scripts\util::debug_out( "--------------\n", 'catdebg.txt');
+		// $ids_unfiltered = array_keys((array) $DB->get_records_sql($sql, $allparams));
+		$ids_unfiltered = $DB->get_records_sql($sql, $allparams);
+		$ids_unfiltered = array_keys($ids_unfiltered);
+
 		// $courseids_filtered = array_intersect($course_ids, array_keys($users_courses)); // New method gives back array of ids.
-		$courseids_filtered = array_intersect($course_ids, $users_courses);
-		\tool_eledia_scripts\util::debug_out(var_export($courseids_filtered, true). "\n", 'catdebg.txt');
-		\tool_eledia_scripts\util::debug_out( "--------------\n", 'catdebg.txt');
-		return $courseids_filtered;
+		if ($contextids) {
+			[$insql, $inparams] = $DB->get_in_or_equal($users_courses);
+			$context_ids = array_keys($DB->get_records_select('context', " instanceid $insql AND contextlevel = $contextlevel ", $inparams, 'id', 'id'));
+			$ids_filtered = array_intersect($ids_unfiltered, $context_ids);
+		} else {
+			$ids_filtered = array_intersect($ids_unfiltered, $users_courses);
+		}
+		return $ids_filtered;
 
 		// Better use get_customfield_value_options() for this.
 		/*
@@ -575,10 +577,18 @@ class externallib extends external_api {
 	}
 
 	// TODO: Change search for array only.
-	// protected static function get_customfield_available_values(array $customfields) {
-	protected static function get_customfield_available_values(array $customfields, array $categories = [], string | int $customfield_id) {
-		$courseids = self::get_filtered_courseids($customfields, $categories, '', 'customfield', $customfield_id);
-		return self::get_customfield_value_options($customfield_id, $courseids);
+	// TODO: Do I need this anymore?
+	// protected static function get_customfield_available_values(array $data) {
+	protected static function get_customfield_available_values(array $data) {
+		[$searchdata, $customfields, $categories] = self::remap_searchdata($data);
+		$courseids = self::get_filtered_courseids($customfields, $categories, $searchdata['searchterm'], 'customfield', $searchdata['current_customfield']);
+		return self::get_customfield_value_options(
+			$searchdata, 
+			$customfields, 
+			$searchdata['current_customfield'], 
+			$searchdata['current_customfield'], 
+			$courseids
+		);
 	}
 
     /**
@@ -598,7 +608,8 @@ class externallib extends external_api {
 								new external_single_structure(
 									array(
 										'fieldid' => new external_value(PARAM_INT, 'the value to match', VALUE_OPTIONAL),
-										'fieldvalue' => new external_value(PARAM_TEXT, 'the value to match', VALUE_OPTIONAL),
+										// 'fieldvalues' => new external_value(PARAM_TEXT, 'the value to match', VALUE_OPTIONAL),
+										'fieldvalues' => new external_multiple_structure(new external_value(PARAM_RAW, 'the value to match', VALUE_OPTIONAL)),
 									),
 									'custom field objects',
 									VALUE_OPTIONAL
@@ -624,10 +635,10 @@ class externallib extends external_api {
 										'visible' => new external_value(PARAM_INT, 'the value to match', VALUE_OPTIONAL),
 										'visibleold' => new external_value(PARAM_INT, 'the value to match', VALUE_OPTIONAL),
 									),
-									'custom field objects',
+									'category field objects',
 									VALUE_OPTIONAL
 								),
-								'custom fields',
+								'category fields',
 								VALUE_OPTIONAL
 							),
                         )
@@ -657,6 +668,10 @@ class externallib extends external_api {
 		return core_course_external::get_categories_returns();
     }
 
+	// TODO: Get sub categories of categories which are transmitted as selected.
+	// This should be an own method to be used in standard search too.
+	// The method should be applied in get_filtered_courseids() additionally to
+	// this method (only if no categories are being searched for dropdown).
 	public static function get_available_categories(array $data): array {
 		global $DB;
 		$courseids = [];
@@ -668,7 +683,7 @@ class externallib extends external_api {
 		\tool_eledia_scripts\util::debug_out( "Category query:\n", 'catdebg.txt');
 		\tool_eledia_scripts\util::debug_out( var_export($searchdata, true) . "\n", 'catdebg.txt');
 		\tool_eledia_scripts\util::debug_out( "foreach:\n", 'catdebg.txt');
-		if (sizeof($searchdata) && sizeof($courseids = self::get_filtered_courseids($customfields, $categories, $searchdata['searchterm'], 'categories', false, $searchdata['progress']))) {
+		if (sizeof($searchdata) && sizeof($courseids = self::get_filtered_courseids($customfields, [], $searchdata['searchterm'], 'categories', 0, 0, 0, false, $searchdata['progress']))) {
 			[$insql, $params] = $DB->get_in_or_equal($courseids);
 			$whereclause = " WHERE c.id $insql ";
 		}
@@ -743,6 +758,7 @@ class externallib extends external_api {
 		return self::get_customfield_fields(true);
 	}
 	
+	// INFO: Search filtering is handled in frontend.
 	public static function get_customfield_available_options(array $data): array {
 		global $DB;
 		$customfield_fieldids = self::get_customfield_fields();
@@ -751,21 +767,23 @@ class externallib extends external_api {
 
 		if (!in_array($searchdata['current_customfield'], $customfield_fieldids))
 			return [];
-		$course_contextids = self::get_filtered_courseids($customfields, $categories, $searchdata['searchterm'], $searchdata['current_customfield'], 0, 0, 0, true);
+		$course_contextids = self::get_filtered_courseids($customfields, $categories, $searchdata['searchterm'], 'customfield', $searchdata['current_customfield'], 0, 0, true, $searchdata['progress']);
+
+		if (!sizeof($course_contextids))
+			return [];
 
 		[$insql, $inparams] = $DB->get_in_or_equal($course_contextids, SQL_PARAMS_NAMED);
 		$inparams['fieldid'] = $searchdata['current_customfield'];
 		// $customfield_data_ids = $DB->get_records_select('customfield_data', "contextid $insql AND fieldid = ?", $inparams, 'id');
 		$select =  "contextid $insql AND fieldid = :fieldid";
         $distinctablevalue = $DB->sql_compare_text('value');
-        $values = $DB->get_records_select_menu('customfield_data', $select, $inparams, '',
-            "DISTINCT $distinctablevalue, $distinctablevalue AS value2");
+        $values = $DB->get_records_select_menu('customfield_data', $select, $inparams, '', "DISTINCT $distinctablevalue, $distinctablevalue AS value2");
         \core_collator::asort($values, \core_collator::SORT_NATURAL);
         $values = array_filter($values);
         if (!$values) {
             return [];
         }
-        $field = \core_customfield\field_controller::create($fieldid);
+        $field = \core_customfield\field_controller::create($searchdata['current_customfield']);
         $isvisible = $field->get_configdata_property('visibility') == \core_course\customfield\course_handler::VISIBLETOALL;
         // Only visible fields to everybody supporting course grouping will be displayed.
         if (!$field->supports_course_grouping() || !$isvisible) {
@@ -779,7 +797,7 @@ class externallib extends external_api {
         // $customfieldactive = ($this->grouping === 'customfield');
         $ret = [];
         foreach ($values as $value => $name) {
-            $ret[] = $name;
+            $ret[] = (object)['name' => $name, 'value' => $value];
 			/*
             $ret[] = (object)[
                 'name' => $name,
@@ -793,6 +811,17 @@ class externallib extends external_api {
 	
 	public static function get_customfield_available_options_parameters() {
 		return self::get_available_parameters();
+	}
+
+	public static function get_customfield_available_options_returns() {
+        return new external_multiple_structure(
+            new external_single_structure(
+                array(
+                    'name' => new external_value(PARAM_RAW, 'category name'),
+                    'value' => new external_value(PARAM_RAW, 'category name'),
+                ), 'List of available custom field options'
+            )
+        );
 	}
 
 
@@ -838,9 +867,17 @@ class externallib extends external_api {
         return $ret;
 	}
 
+	public static function get_customfield_value_options_parameters() {
+		return self::get_available_parameters();
+	}
+
+	public static function get_customfield_value_options_returns() {
+		return self::get_available_parameters();
+	}
+
     /**
      * Retrieves number of records from course table
-     *
+     * TODO: Remove. 
      * Not all fields are retrieved. Records are ready for preloading context
      *
      * @param string $whereclause
