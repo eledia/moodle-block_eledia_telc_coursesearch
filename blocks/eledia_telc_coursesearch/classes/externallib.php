@@ -799,6 +799,7 @@ class externallib extends external_api {
 		FROM {tag} t
 		JOIN {tag_instance} ti ON ti.tagid = t.id
 		WHERE ti.itemtype = 'course' AND ti.component = 'core' $and AND ti.itemid $insql 
+		LIMIT 6
 		";
 
 		$tags = $DB->get_records_sql($sql, $params);
