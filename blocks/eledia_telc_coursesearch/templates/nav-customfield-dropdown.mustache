@@ -38,6 +38,11 @@
     }
 }}
 <ul class="dropdown-menu dropdown-customfields-{{customfieldid}} dropdown-menu-customfields customprevent" role="menu" data-show-active-item data-skip-active-class="true" data-active-item-text aria-labelledby="groupingdropdown">
+	{{#description}}
+    <li class="dropdown-description">
+			<div>{{#pix}}i/info, core{{/pix}}</div><div>{{{description}}}</div>
+    </li>
+	{{/description}}
     <li class="dropdown-divider" role="presentation">
         <span class="filler">&nbsp;</span>
     </li>

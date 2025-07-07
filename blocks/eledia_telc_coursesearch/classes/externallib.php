@@ -816,7 +816,7 @@ class externallib extends external_api {
 	public static function get_customfield_fields(bool $info = false): array {
 		global $DB;
 		$sql = "
-		SELECT f.id, f.name, f.configdata FROM {customfield_field} f
+		SELECT f.id, f.name, f.configdata, f.description FROM {customfield_field} f
 		INNER JOIN {customfield_category} c
 		ON c.id = f.categoryid
 		WHERE c.area = 'course'
@@ -842,11 +842,17 @@ class externallib extends external_api {
 	public static function map_customfield_info($customfield) {
 		$configdata = json_decode($customfield->configdata);
 		if ((int) $configdata->visibility ===  2)
-			return (object) ['id' => $customfield->id, 'name' => $customfield->name];
+			return (object) ['id' => $customfield->id, 'name' => self::select_translation($customfield->name), 'description' => $customfield->description];
 	}
 	
 	public static function get_customfields() {
 		return self::get_customfield_fields(true);
+	}
+
+	public static function select_translation(string $text): string {
+		$idx = current_language() === 'de' ? 0 : 1;
+		$translations =  explode(';', $text);
+		return (isset($translations[$idx]) ? $translations[$idx] : $translations[0]);
 	}
 	
 	// INFO: Search filtering is handled in frontend.
@@ -878,6 +884,7 @@ class externallib extends external_api {
         $isvisible = $field->get_configdata_property('visibility') == \core_course\customfield\course_handler::VISIBLETOALL;
         // Only visible fields to everybody supporting course grouping will be displayed.
         if (!$field->supports_course_grouping() || !$isvisible) {
+			// throw new \Exception(var_export($field->get_options_array(), true));
             return []; // The field shouldn't have been selectable in the global settings, but just skip it now.
         }
         if (!defined('BLOCK_MYOVERVIEW_CUSTOMFIELD_EMPTY')) {

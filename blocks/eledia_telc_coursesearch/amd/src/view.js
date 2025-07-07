@@ -744,12 +744,11 @@ const renderCustomfields = (dropdownContainer, dropdown, customfieldsData, selec
     const template = 'block_eledia_telc_coursesearch/nav-customfield-dropdown';
 
     // NOTE: Render function for mustache.
-    window.console.log('renderCustomfields start');
-    window.console.log(customfieldsData);
     return Templates.renderForPromise(template, {
         customvalues: customfieldsData,
         customselections: selectionsData,
         customfieldid: currentCustomField,
+        description: document.querySelector(dropdownContainer).dataset.description,
     }).then(({ html, js }) => {
         window.console.log('dropdownContainer');
         window.console.log(dropdownContainer);

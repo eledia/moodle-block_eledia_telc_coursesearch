@@ -68,3 +68,17 @@ input::after {
     max-height: 100% !important;
     overflow: auto;
 }
+
+.dropdown-description {
+    /*padding: .25rem 1.5rem;*/
+    display: flex;
+    padding: .25rem .25rem;
+    color: darkgray;
+}
+.dropdown-description div {
+    line-height: 1;
+}
+
+.dropdown-description div p {
+	margin-bottom: .5rem;
+}
