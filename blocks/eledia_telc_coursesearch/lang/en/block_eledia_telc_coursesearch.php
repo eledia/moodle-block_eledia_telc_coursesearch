@@ -106,3 +106,5 @@ $string['nocatselected'] = 'No categories selected';
 $string['nocatavailable'] = 'No categories available';
 $string['notagsselected'] = 'No tags selected';
 $string['notagsavailable'] = 'No tags available';
+$string['nocustomfieldsselected'] = 'No customfields selected';
+$string['nocustomfieldsavailable'] = 'No customfields available';
