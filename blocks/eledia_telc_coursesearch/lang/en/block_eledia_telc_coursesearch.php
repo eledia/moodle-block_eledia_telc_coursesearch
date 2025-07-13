@@ -80,6 +80,8 @@ $string['shortname'] = 'Short name';
 $string['summary'] = 'Summary';
 // TODO: Tidy up.
 $string['summary'] = 'List';
+$string['expandsummary'] = 'expand summary';
+$string['collapsesummary'] = 'collapse summary';
 $string['title'] = 'Course name';
 $string['aria:hidecourse'] = 'Remove {$a} from view';
 $string['aria:showcourse'] = 'Restore {$a} to view';
