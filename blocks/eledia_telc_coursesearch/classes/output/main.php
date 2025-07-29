@@ -26,6 +26,7 @@ defined('MOODLE_INTERNAL') || die();
 
 use block_eledia_telc_coursesearch\externallib;
 use core_competency\url;
+use core_contentbank\output\customfields;
 use renderable;
 use renderer_base;
 use templatable;
@@ -466,12 +467,20 @@ class main implements renderable, templatable {
         $chelper = new \coursecat_helper();
         $chelper->set_show_courses(20)->
                 set_courses_display_options([
-				'recursive' => true,
-				'idonly' => true,
-			]);
+                'recursive' => true,
+                'idonly' => true,
+            ]);
 
         $chelper->set_attributes(array('class' => 'frontpage-course-list-all'));
         $users_courses = \core_course_category::top()->get_courses($chelper->get_courses_display_options());
+        // Collapse remaining fields if there are more than 4 custom fields.
+        // I know, it's pretty.
+        $customfields = array_values(array_filter(externallib::get_customfields(), fn($value) => !is_null($value) ));
+        $customfields_collapse = false;
+        if (count($customfields) > 4) {
+           $customfields_collapse = array_splice($customfields, 4);
+           $customfields= array_splice($customfields, 0, 4);
+        }
 
         $defaultvariables = [
             // 'totalcoursecount' => count(enrol_get_all_users_courses($USER->id, true)),
@@ -495,8 +504,8 @@ class main implements renderable, templatable {
             'displaygroupinghidden' => $this->displaygroupinghidden,
             'displaygroupingselector' => $this->displaygroupingselector,
             'displaygroupingcustomfield' => $this->displaygroupingcustomfield && $customfieldvalues,
-			// I know, it's pretty.
-			'customfields' => array_values(array_filter(externallib::get_customfields(), fn($value) => !is_null($value) )),
+            'customfields' => $customfields,
+            'customfields_collapse' => $customfields_collapse,
             'customfieldname' => $this->customfiltergrouping,
             'customfieldvalue' => $this->customfieldvalue,
             'customfieldvalues' => $customfieldvalues,
