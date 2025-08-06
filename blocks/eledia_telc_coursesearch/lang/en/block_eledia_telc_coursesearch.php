@@ -77,10 +77,10 @@ $string['searchcourses'] = "Search courses";
 $string['searchcategories'] = "Search categories";
 $string['searchtags'] = "Search tags";
 $string['shortname'] = 'Short name';
-$string['summary'] = 'Summary';
-// TODO: Tidy up.
+// $string['summary'] = 'Summary'; // No time to change the code.
 $string['summary'] = 'List';
 $string['expandsummary'] = 'expand summary';
+$string['expandsearch'] = 'Expand search';
 $string['collapsesummary'] = 'collapse summary';
 $string['title'] = 'Course name';
 $string['aria:hidecourse'] = 'Remove {$a} from view';

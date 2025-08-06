@@ -79,6 +79,7 @@ $string['searchtags'] = "Tags suchen";
 $string['shortname'] = 'Kurzname';
 $string['summary'] = 'Liste';
 $string['expandsummary'] = 'Zusammenfassung ausklappen';
+$string['expandsearch'] = 'Erweiterte Suche';
 $string['collapsesummary'] = 'Zusammenfassung einklappen';
 $string['title'] = 'Kursname';
 $string['aria:hidecourse'] = '{$a} ausblenden';
