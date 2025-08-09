@@ -12,6 +12,7 @@ The plugin consists of two main sections:
 - Search section
 - Results section
 ## Search section
+![Search section and results view](../assets/userview_top_en.png)
 ### Using the searchable dropdown fields
 1. Click on a field
 - A dropdown opens with a fixed number of options.
@@ -27,6 +28,10 @@ Depending on the number of available search fields, there might be a "Expand sea
 The full text search applies the search term to the course name and description.  
 It may show a "No results" page.
 ## Results section
-This section contains the search results either in list form or in card form which displays the found courses. 
-If there is a course description, you can expand it in list view.
-At the bottom, there are buttons to step through the results if there are too many to display on one page.
+This section contains the search results either in list form or in card form which displays the found courses.  
+If there is a course description, you can expand it in list view.  
+![Expand description](../assets/userview_expanddescription_en.png)
+At the bottom, there are buttons to step through the results if there are too many to display on one page.  
+![Bottom of results page](../assets/userview_bottom_en.png)
+
+

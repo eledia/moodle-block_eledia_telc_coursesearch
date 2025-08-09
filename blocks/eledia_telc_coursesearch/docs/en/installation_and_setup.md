@@ -6,7 +6,7 @@ Place the plugin folder (`eledia_telc_coursesearch/`) into the moodle `blocks/` 
 Because the plugin is a *block*, it only is recommended to display it on the dashboard.  
 If you need the block in other places (start page for example), your theme must support this.  
 To display the plugin to all users on the dashboard, 
-- go to *Site Administration* **&rarr;** *Appearance* **&rarr;** *Default Dashboard page*  
+- go to *Site Administration* **&rarr;** *Appearance* **&rarr;** *Default Dashboard page* 
 - Turn edit mode on
 - Click *Add a block*
 - Add the plugin
@@ -15,16 +15,16 @@ To display the plugin to all users on the dashboard,
 Now the course search is available to all users.
 ### Add custom fields
 The plugin only shows custom fields that are visible to everyone.  
-- go to *Site Administration* **&rarr;** *Courses*
-- in the  *Default settings* section, go to *Course custom fields*
-- if there is no category, click *Add a new category*
-- in the *General* section, click *Add a new custom field* and choose a field type
+- go to *Site Administration* **&rarr;** *Courses* 
+- in the  *Default settings* section, go to *Course custom fields* ![Site administration](../assets/adminsettings_en.png)
+- if there is no category, click *Add a new category* ![Customfield menu](../assets/admin_customfields_en.png)
+- in the *General* section, click *Add a new custom field* and choose a field type ![Add a new customfield](../assets/admin_customfieldsdd_en.png)
 - add *Name*, *Short name* and *Description*
-    - The description is shown in the plugin to the user and formatting is supported.
+    - The description is shown in the plugin to the user and formatting is supported. ![Add customfield details](../assets/create_customfield_en.png)
 - **Translation:** The plugin supports german and english translation for the custom fields *Name* field:
     - Syntax: `Deutscher Name;English name`
     - If the user language is not german (any type of german), the english name is shown.
-- in the *Common course custom fields settings* section set *Visible to* to **Everyone**
+- in the *Common course custom fields settings* section set *Visible to* to **Everyone** ![Set visibility to **Everyone**](../assets/customfield_visibility_en.png)
 - use the custom field in at least one course that is visible to all users:
     - go to the course settings. In the *Additional fields*, you will find the custom field.
     - do a selection
