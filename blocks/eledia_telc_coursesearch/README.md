@@ -3,11 +3,10 @@ This plugin is derived from the moodle courseoverview block. Initially it was pl
 The docs are available in english and german.  
 ## Documentation
 ### English
-[Installation instructions and requirements](docs/en/installation.md)  
-[Administration settings](docs/en/admin_settings.md)  
-[How to make the plugin available to users](docs/en/provisioning.md)  
+[Installation and setup instructions](docs/en/installation_and_setup.md)  
+[End user instructions](docs/en/user_instructions.md)  
+[Developer documentation](docs/development/developer_documentation.md)  
 ### German
-[Installationshinweise und Anforderungen](docs/de/installation.md)  
-[Admineinstellungen](docs/de/admin_settings.md)  
-[Pluginbereitstellung](docs/de/provisioning.md)  
+[Installations- und Einrichtungshinweise und Anforderungen](docs/de/installation_and_setup.md)  
+[Anwenderinformationen](docs/de/user_instructions.md)  
 
