@@ -777,8 +777,8 @@ class externallib extends external_api {
 
 		$map_function = $info ? [self::class, 'map_customfield_info'] : [self::class, 'map_customfield_ids'];
 
-		$customdata_formatted = array_map($map_function, $customfields);
-		return $customdata_formatted;
+		$custom_ids = array_map($map_function, $customfields);
+		return $custom_ids;
 	}
 
 	public static function map_customfield_ids($customfield) {
