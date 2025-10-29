@@ -2006,49 +2006,6 @@ function manageCustomfielddropdownCollapse(e) {
             }
         });
     });
-    renderSelectOptions();
-}
-
-/**
- * Renders the selected option items.
- *
- */
-function renderSelectOptions() {
-    let options = [];
-
-    selectedCustomfields.forEach((subArray, subIndex) => {
-        subArray.forEach((option, index) => {
-            options.push({
-                index: subIndex,
-                description: option.name,
-                type: 'customfield',
-                cindex: index
-            });
-        });
-    });
-
-    selectedCategories.forEach((option, index) => {
-        options.push({
-            index: index,
-            description: option.name,
-            type: 'category',
-            cindex: 0
-        });
-    });
-
-    selectedTags.forEach((option, index) => {
-        options.push({
-            index: index,
-            description: option.name,
-            type: 'tag',
-            cindex: 0
-        });
-    });
-    Templates.renderForPromise('block_eledia_telc_coursesearch/nav-selected-option-items', {
-        options: options
-    }).then(({ html, js }) => {
-        return Templates.replaceNodeContents('.coursesearchitems', html, js);
-    }).catch(error => displayException(error));
 }
 
 /**
