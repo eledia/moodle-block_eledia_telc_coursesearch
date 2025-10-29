@@ -86,15 +86,3 @@ input::after {
 div[data-region="paging-control-limit-container"] {
     display: none !important;
 }
-
-.collapse-filter.collapse-enabled.collapse-enabled {
-	display: none;
-}
-
-.customfields-collapse .collapse-filter:not(.collapse-enabled) {
-	display: none;
-}
-
-.customfields-collapse .collapse-filter.collapse-enabled {
-	display: block;
-}
