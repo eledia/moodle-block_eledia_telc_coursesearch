@@ -50,6 +50,20 @@ if ($ADMIN->fulltree) {
             $choices,
             $choices));
     unset ($choices);
+	
+    // Enable / Disable available layouts.
+	$choices = [
+		BLOCK_ETCOURSESEARCH_OPTIONS_OFF => get_string('selectedoption_off', 'block_eledia_telc_coursesearch'),
+		BLOCK_ETCOURSESEARCH_OPTIONS_TOP => get_string('selectedoption_top', 'block_eledia_telc_coursesearch'),
+		BLOCK_ETCOURSESEARCH_OPTIONS_BOTTOM => get_string('selectedoption_bottom', 'block_eledia_telc_coursesearch'),
+	];
+    $settings->add(new admin_setting_configselect(
+            'block_eledia_telc_coursesearch/options_position',
+            get_string('selected_options_position', 'block_eledia_telc_coursesearch'),
+            get_string('selected_options_position_description', 'block_eledia_telc_coursesearch'),
+            BLOCK_ETCOURSESEARCH_OPTIONS_OFF,
+            $choices));
+    unset ($choices);
 
     // Enable / Disable course filter items.
     $settings->add(new admin_setting_heading('block_eledia_telc_coursesearch/availablegroupings',

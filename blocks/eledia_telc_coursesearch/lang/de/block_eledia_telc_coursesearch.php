@@ -109,4 +109,8 @@ $string['notagsselected'] = 'Keine Tags ausgewählt';
 $string['notagsavailable'] = 'Keine Tags verfügbar';
 $string['nocustomfieldsselected'] = 'Keine benutzerdefinierten Felder ausgewählt';
 $string['nocustomfieldsavailable'] = 'Keine benutzerdefinierten Felder verfügbar';
-
+$string['selectedoption_off'] = 'Aus';
+$string['selectedoption_top'] = 'Unterhalb des immer sichtbaren Suchfeldbereichs';
+$string['selectedoption_bottom'] = 'Unterhalb des ausklappbaren Suchfeldbereichs';
+$string['selected_options_position'] = 'Position der ausgewählten Optionen';
+$string['selected_options_position_description'] = 'Die Position des Bereichs für die Kacheln der ausgewählten Optionen.';

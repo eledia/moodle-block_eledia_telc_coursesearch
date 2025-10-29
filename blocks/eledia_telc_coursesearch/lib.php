@@ -72,6 +72,13 @@ define('BLOCK_ETCOURSESEARCH_DISPLAY_CATEGORIES_ON', 'on');
 define('BLOCK_ETCOURSESEARCH_DISPLAY_CATEGORIES_OFF', 'off');
 
 /**
+ * Constants for the admin selected options area display position
+ */
+define('BLOCK_ETCOURSESEARCH_OPTIONS_OFF', 'off');
+define('BLOCK_ETCOURSESEARCH_OPTIONS_TOP', 'top');
+define('BLOCK_ETCOURSESEARCH_OPTIONS_BOTTOM', 'bottom');
+
+/**
  * Get the current user preferences that are available
  *
  * @uses core_user::is_current_user
