@@ -1294,13 +1294,11 @@ const registerEventListeners = (root, page) => {
 
     clearCustomfieldIcons.forEach(icon => {
         currentCustomField = icon.dataset.customfieldid;
-        const customfieldInputs = page.querySelectorAll(customClass + currentCustomField);
+        const customfieldInput = page.querySelector(customClass + currentCustomField);
         icon.addEventListener('click', () => {
             window.console.log('CLICKED clearCustomfieldIcon');
-            customfieldInputs.forEach(input => {
-                input.value = '';
-            });
-            customfieldInput(customClass + currentCustomField).focus();
+            customfieldInput.value = '';
+            customfieldInput.focus();
             clearCustomfieldSingleIconSearch(icon);
             initializeCustomfieldSearchContent(
                 SELECTORS.customfields.dropdownDiv + currentCustomField,
@@ -1503,6 +1501,7 @@ const registerEventListeners = (root, page) => {
                 SELECTORS.cat.dropdown,
                 dropdownHelper,
                 page);
+            // TODO: Initialize search on *every* change.
             initializePagedContent(root, searchFunctionalityCurry(), input.value.trim(), getParams());
         }
     });
@@ -1518,6 +1517,7 @@ const registerEventListeners = (root, page) => {
                 SELECTORS.tags.dropdown,
                 dropdownHelper,
                 page);
+            // TODO: Initialize search on *every* change.
             initializePagedContent(root, searchFunctionalityCurry(), input.value.trim(), getParams());
         }
     });
@@ -1610,15 +1610,6 @@ export const tagsinput = () => {
 };
 
 /**
- * Eventlistener helper to return the correct customfield input element.
- * @param {String} customfieldClass
- */
-export const customfieldInput = (customfieldClass) => {
-    const customfieldInputs = document.querySelectorAll(customfieldClass);
-    return selectedCustomfields[currentCustomField].length === 0 ? customfieldInputs[1] : customfieldInputs[0];
-};
-
-/**
  * Reset the search icon and trigger the init for the block.
  *
  * @param {HTMLElement} clearIcon Our closing icon to manipulate.
@@ -1691,7 +1682,6 @@ const manageCategorydropdownCollapse = (e) => {
     const catDropdowns = page.querySelectorAll(SELECTORS.cat.dropdown);
     const catInputs = page.querySelectorAll(SELECTORS.cat.input);
 
-    // We don't want to close the dropdown if clicking inside it or the input field.
     for (const dropdown of catDropdowns) {
         if (dropdown.contains(e.target)) {
             return;
@@ -1868,9 +1858,8 @@ function manageCustomfielddropdownCollapse() {
     customfields.forEach((v, i) => {
         if (i !== currentCustomField) {
             const customFields = document.getElementsByClassName('collapse-cfid-' + i);
-            const collapseDisabled = (selectedCustomfields[i] !== undefined && selectedCustomfields[i].length);
             Array.from(customFields).forEach(cf => {
-                if (collapseDisabled) {
+                if (selectedCustomfields[i] !== undefined && selectedCustomfields[i].length) {
                     cf.classList.remove('collapse-enabled');
                 } else if (!cf.classList.contains('collapse-enabled')) {
                     cf.classList.add('collapse-enabled');
