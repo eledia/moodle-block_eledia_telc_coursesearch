@@ -36,11 +36,12 @@
         ]
     }
 }}
-<div id="searchform-auto-{{uniqid}}" class="d-flex flex-wrap align-items-center simplesearchform">
+<div id="searchform-auto-{{uniqid}}" class="d-flex flex-wrap align-items-center simplesearchform ">
     <div class="input-group searchbar w-100" role="search">
         <label for="searchinput-{{uniqid}}">
             <span class="sr-only">{{$label}}{{#str}} search, core {{/str}}{{/label}}</span>
         </label>
+        <span>
         <input
            type="text"
            data-region="input"
@@ -52,8 +53,9 @@
            name="{{name}}"
            value=""
            autocomplete="off"
+           readonly
            {{$additionalattributes}}{{/additionalattributes}}
-        >
+        ></span>
         <button
             class="btn btn-clear d-none customprevent"
             data-action="clearcustomsearch"

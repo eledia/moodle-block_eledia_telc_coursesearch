@@ -41,6 +41,7 @@
         <label for="searchinput-{{uniqid}}">
             <span class="sr-only">{{$label}}{{#str}} search, core {{/str}}{{/label}}</span>
         </label>
+        <span>
         <input
            type="text"
            data-region="input"
@@ -51,8 +52,10 @@
            name="search"
            value="{{$value}}{{/value}}"
            autocomplete="off"
+           readonly
            {{$additionalattributes}}{{/additionalattributes}}
         >
+        </span>
         <button
             class="btn btn-clear d-none tagsprevent"
             data-action="cleartagssearch"
