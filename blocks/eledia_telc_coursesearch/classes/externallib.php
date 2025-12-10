@@ -521,7 +521,6 @@ class externallib extends external_api {
 			$allparams['limit'] = $limit;
 			$allparams['offset'] = $offset;
 		}
-		\tool_eledia_scripts\util::debug_out($sql . "\n\n" . var_export($allparams, true), 'sdbg.txt');
 
 		$ids_unfiltered = $DB->get_records_sql($sql, $allparams);
 		$ids_unfiltered = array_keys($ids_unfiltered);
