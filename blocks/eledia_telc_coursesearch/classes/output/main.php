@@ -483,7 +483,7 @@ class main implements renderable, templatable {
            $customfields= array_splice($customfields, 0, 4);
            $customfield_collapsable = true;
         }
-		$options_position = get_config('block_eledia_telc_coursesearch', 'options_position');
+        $options_position = get_config('block_eledia_telc_coursesearch', 'options_position');
 
         $defaultvariables = [
             // 'totalcoursecount' => count(enrol_get_all_users_courses($USER->id, true)),
@@ -516,9 +516,9 @@ class main implements renderable, templatable {
             'selectedcustomfield' => $selectedcustomfield,
             'showsortbyshortname' => $CFG->courselistshortnames,
         ];
-		if ($options_position) {
-			$defaultvariables['options_' . $options_position] = true;
-		}
+        if ($options_position) {
+            $defaultvariables['options_' . $options_position] = true;
+        }
         return array_merge($defaultvariables, $preferences);
 
     }

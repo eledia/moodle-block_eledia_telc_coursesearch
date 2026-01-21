@@ -47,9 +47,9 @@ class renderer extends plugin_renderer_base {
         $chelper = new \coursecat_helper();
         $chelper->set_show_courses(20)->
                 set_courses_display_options([
-				'recursive' => true,
-				'idonly' => true,
-			]);
+                'recursive' => true,
+                'idonly' => true,
+            ]);
 
         $chelper->set_attributes(array('class' => 'frontpage-course-list-all'));
         $users_courses = \core_course_category::top()->get_courses($chelper->get_courses_display_options());

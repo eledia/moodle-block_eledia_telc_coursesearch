@@ -25,7 +25,7 @@ $functions = [
         'description' => 'Return category details',
         'type' => 'read',
         // 'capabilities' => 'moodle/category:viewhiddencategories',
-		'ajax' => true,
+        'ajax' => true,
         // An optional list of services where the function will be included.
         /*'services' => [*/
         /*    // A standard Moodle install includes one default service:*/
@@ -40,7 +40,7 @@ $functions = [
         'methodname' => 'get_available_tags',
         'description' => 'Return course tags',
         'type' => 'read',
-		'ajax' => true,
+        'ajax' => true,
     ],
     'block_eledia_telc_coursesearch_get_customfield_available_options' => [
         'classname' => 'block_eledia_telc_coursesearch\externallib',
@@ -49,7 +49,7 @@ $functions = [
         'description' => 'Return category details',
         'type' => 'read',
         // 'capabilities' => 'moodle/category:viewhiddencategories',
-		'ajax' => true,
+        'ajax' => true,
         // An optional list of services where the function will be included.
         /*'services' => [*/
         /*    // A standard Moodle install includes one default service:*/
@@ -66,7 +66,7 @@ $functions = [
         'description' => 'Return customfields for filter rendering.',
         'type' => 'read',
         // 'capabilities' => 'moodle/category:viewhiddencategories',
-		'ajax' => true,
+        'ajax' => true,
         // An optional list of services where the function will be included.
         /*'services' => [*/
         /*    // A standard Moodle install includes one default service:*/
@@ -83,7 +83,7 @@ $functions = [
         'description' => 'Return category details',
         'type' => 'read',
         // 'capabilities' => 'moodle/category:viewhiddencategories',
-		'ajax' => true,
+        'ajax' => true,
         // An optional list of services where the function will be included.
         /*'services' => [*/
         /*    // A standard Moodle install includes one default service:*/
