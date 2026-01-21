@@ -533,8 +533,8 @@ behat_moodle:
     # Run tests
     - cd /tmp/moodle
     - |
-      if [ -d "$PLUGIN_PATH/tests/behat" ]; then
-        EXCLUDE_TAGS=$(grep -rhoE '@[A-Za-z0-9_]+' "$PLUGIN_PATH/tests/behat" | grep '_wp$' | sort -u | tr '\n' ' ')
+      if [ -d "/tmp/moodle/$PLUGIN_PATH/tests/behat" ]; then
+        EXCLUDE_TAGS=$(grep -rhoE '@[A-Za-z0-9_]+' "/tmp/moodle/$PLUGIN_PATH/tests/behat" | grep '_wp$' | sort -u | tr '\n' ' ')
       else
         EXCLUDE_TAGS=""
       fi
@@ -552,13 +552,13 @@ behat_moodle:
           --format pretty --out std \
           --format junit --out /builds/$CI_PROJECT_PATH/behat-junit.xml \
           --tags "$TAG_EXPR" \
-          "$PLUGIN_PATH/tests/behat" || true
+          "/tmp/moodle/$PLUGIN_PATH/tests/behat" || true
       else
         vendor/bin/behat \
           --config /tmp/moodledata_behat/behatrun/behat/behat.yml \
           --format pretty --out std \
           --format junit --out /builds/$CI_PROJECT_PATH/behat-junit.xml \
-          "$PLUGIN_PATH/tests/behat" || true
+          "/tmp/moodle/$PLUGIN_PATH/tests/behat" || true
       fi
 
       : >> /builds/$CI_PROJECT_PATH/behat_notice.txt
