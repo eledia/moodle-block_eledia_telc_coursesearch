@@ -565,8 +565,9 @@ behat_moodle:
       fi
 
       # Copy the entire behat-junit directory to CI_PROJECT_DIR
-      cp -r /tmp/behat-junit "$CI_PROJECT_DIR/" || mkdir -p "$CI_PROJECT_DIR/behat-junit"
-      : >> "$CI_PROJECT_DIR/behat_notice.txt"
+      cd "$CI_PROJECT_DIR"
+      cp -r /tmp/behat-junit . || mkdir -p behat-junit
+      touch behat_notice.txt
 
   artifacts:
     when: always
