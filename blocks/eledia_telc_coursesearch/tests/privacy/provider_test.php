@@ -13,6 +13,7 @@
 //
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+
 /**
  * Unit tests for the block_eledia_telc_coursesearch implementation of the privacy API.
  *
@@ -72,22 +73,22 @@ final class provider_test extends \core_privacy\tests\provider_testcase {
      * @return array Array of valid user preferences.
      */
     public static function user_preference_provider(): array {
-        return array(
-            array('block_eledia_telc_coursesearch_user_sort_preference', 'lastaccessed', ''),
-            array('block_eledia_telc_coursesearch_user_sort_preference', 'title', ''),
-            array('block_eledia_telc_coursesearch_user_sort_preference', 'shortname', ''),
-            array('block_eledia_telc_coursesearch_user_grouping_preference', 'allincludinghidden', ''),
-            array('block_eledia_telc_coursesearch_user_grouping_preference', 'all', ''),
-            array('block_eledia_telc_coursesearch_user_grouping_preference', 'inprogress', ''),
-            array('block_eledia_telc_coursesearch_user_grouping_preference', 'future', ''),
-            array('block_eledia_telc_coursesearch_user_grouping_preference', 'past', ''),
-            array('block_eledia_telc_coursesearch_user_grouping_preference', 'hidden', ''),
-            array('block_eledia_telc_coursesearch_user_grouping_preference', 'favourites', ''),
-            array('block_eledia_telc_coursesearch_user_view_preference', 'card', ''),
-            array('block_eledia_telc_coursesearch_user_view_preference', 'list', ''),
-            array('block_eledia_telc_coursesearch_user_view_preference', 'summary', ''),
-            array('block_eledia_telc_coursesearch_user_paging_preference', 12, 12)
-        );
+        return [
+            ['block_eledia_telc_coursesearch_user_sort_preference', 'lastaccessed', ''],
+            ['block_eledia_telc_coursesearch_user_sort_preference', 'title', ''],
+            ['block_eledia_telc_coursesearch_user_sort_preference', 'shortname', ''],
+            ['block_eledia_telc_coursesearch_user_grouping_preference', 'allincludinghidden', ''],
+            ['block_eledia_telc_coursesearch_user_grouping_preference', 'all', ''],
+            ['block_eledia_telc_coursesearch_user_grouping_preference', 'inprogress', ''],
+            ['block_eledia_telc_coursesearch_user_grouping_preference', 'future', ''],
+            ['block_eledia_telc_coursesearch_user_grouping_preference', 'past', ''],
+            ['block_eledia_telc_coursesearch_user_grouping_preference', 'hidden', ''],
+            ['block_eledia_telc_coursesearch_user_grouping_preference', 'favourites', ''],
+            ['block_eledia_telc_coursesearch_user_view_preference', 'card', ''],
+            ['block_eledia_telc_coursesearch_user_view_preference', 'list', ''],
+            ['block_eledia_telc_coursesearch_user_view_preference', 'summary', ''],
+            ['block_eledia_telc_coursesearch_user_paging_preference', 12, 12],
+        ];
     }
 
     public function test_export_user_preferences_with_hidden_courses(): void {

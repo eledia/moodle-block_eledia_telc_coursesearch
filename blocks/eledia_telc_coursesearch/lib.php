@@ -86,11 +86,11 @@ define('BLOCK_ETCOURSESEARCH_OPTIONS_BOTTOM', 'bottom');
  * @return array[] Array representing current options along with defaults
  */
 function block_eledia_telc_coursesearch_user_preferences(): array {
-    $preferences['block_eledia_telc_coursesearch_user_grouping_preference'] = array(
+    $preferences['block_eledia_telc_coursesearch_user_grouping_preference'] = [
         'null' => NULL_NOT_ALLOWED,
         'default' => BLOCK_ETCOURSESEARCH_GROUPING_ALL,
         'type' => PARAM_ALPHA,
-        'choices' => array(
+        'choices' => [
             BLOCK_ETCOURSESEARCH_GROUPING_ALLINCLUDINGHIDDEN,
             BLOCK_ETCOURSESEARCH_GROUPING_ALL,
             BLOCK_ETCOURSESEARCH_GROUPING_INPROGRESS,
@@ -99,9 +99,9 @@ function block_eledia_telc_coursesearch_user_preferences(): array {
             BLOCK_ETCOURSESEARCH_GROUPING_FAVOURITES,
             BLOCK_ETCOURSESEARCH_GROUPING_HIDDEN,
             BLOCK_ETCOURSESEARCH_GROUPING_CUSTOMFIELD,
-        ),
+        ],
         'permissioncallback' => [core_user::class, 'is_current_user'],
-    );
+    ];
 
     $preferences['block_eledia_telc_coursesearch_user_grouping_customfieldvalue_preference'] = [
         'null' => NULL_ALLOWED,
@@ -110,52 +110,52 @@ function block_eledia_telc_coursesearch_user_preferences(): array {
         'permissioncallback' => [core_user::class, 'is_current_user'],
     ];
 
-    $preferences['block_eledia_telc_coursesearch_user_sort_preference'] = array(
+    $preferences['block_eledia_telc_coursesearch_user_sort_preference'] = [
         'null' => NULL_NOT_ALLOWED,
         'default' => BLOCK_ETCOURSESEARCH_SORTING_LASTACCESSED,
         'type' => PARAM_ALPHA,
-        'choices' => array(
+        'choices' => [
             BLOCK_ETCOURSESEARCH_SORTING_TITLE,
             BLOCK_ETCOURSESEARCH_SORTING_LASTACCESSED,
-            BLOCK_ETCOURSESEARCH_SORTING_SHORTNAME
-        ),
+            BLOCK_ETCOURSESEARCH_SORTING_SHORTNAME,
+        ],
         'permissioncallback' => [core_user::class, 'is_current_user'],
-    );
+    ];
 
-    $preferences['block_eledia_telc_coursesearch_user_view_preference'] = array(
+    $preferences['block_eledia_telc_coursesearch_user_view_preference'] = [
         'null' => NULL_NOT_ALLOWED,
         'default' => BLOCK_ETCOURSESEARCH_VIEW_CARD,
         'type' => PARAM_ALPHA,
-        'choices' => array(
+        'choices' => [
             BLOCK_ETCOURSESEARCH_VIEW_CARD,
             BLOCK_ETCOURSESEARCH_VIEW_LIST,
-            BLOCK_ETCOURSESEARCH_VIEW_SUMMARY
-        ),
+            BLOCK_ETCOURSESEARCH_VIEW_SUMMARY,
+        ],
         'permissioncallback' => [core_user::class, 'is_current_user'],
-    );
+    ];
 
-    $preferences['/^block_eledia_telc_coursesearch_hidden_course_(\d)+$/'] = array(
+    $preferences['/^block_eledia_telc_coursesearch_hidden_course_(\d)+$/'] = [
         'isregex' => true,
-        'choices' => array(0, 1),
+        'choices' => [0, 1],
         'type' => PARAM_INT,
         'null' => NULL_NOT_ALLOWED,
         'default' => 0,
         'permissioncallback' => [core_user::class, 'is_current_user'],
-    );
+    ];
 
-    $preferences['block_eledia_telc_coursesearch_user_paging_preference'] = array(
+    $preferences['block_eledia_telc_coursesearch_user_paging_preference'] = [
         'null' => NULL_NOT_ALLOWED,
         'default' => BLOCK_ETCOURSESEARCH_PAGING_12,
         'type' => PARAM_INT,
-        'choices' => array(
+        'choices' => [
             BLOCK_ETCOURSESEARCH_PAGING_12,
             BLOCK_ETCOURSESEARCH_PAGING_24,
             BLOCK_ETCOURSESEARCH_PAGING_48,
             BLOCK_ETCOURSESEARCH_PAGING_96,
-            BLOCK_ETCOURSESEARCH_PAGING_ALL
-        ),
+            BLOCK_ETCOURSESEARCH_PAGING_ALL,
+        ],
         'permissioncallback' => [core_user::class, 'is_current_user'],
-    );
+    ];
 
     return $preferences;
 }

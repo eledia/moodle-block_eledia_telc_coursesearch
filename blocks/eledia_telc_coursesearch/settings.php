@@ -28,29 +28,33 @@ if ($ADMIN->fulltree) {
     require_once($CFG->dirroot . '/blocks/eledia_telc_coursesearch/lib.php');
 
     // Presentation options heading.
-    $settings->add(new admin_setting_heading('block_eledia_telc_coursesearch/appearance',
-            get_string('appearance', 'admin'),
-            ''));
+    $settings->add(new admin_setting_heading(
+        'block_eledia_telc_coursesearch/appearance',
+        get_string('appearance', 'admin'),
+        ''
+    ));
 
     // Display Course Categories on Dashboard course items (cards, lists, summary items).
     $settings->add(new admin_setting_configcheckbox(
-            'block_eledia_telc_coursesearch/displaycategories',
-            get_string('displaycategories', 'block_eledia_telc_coursesearch'),
-            get_string('displaycategories_help', 'block_eledia_telc_coursesearch'),
-            1));
+        'block_eledia_telc_coursesearch/displaycategories',
+        get_string('displaycategories', 'block_eledia_telc_coursesearch'),
+        get_string('displaycategories_help', 'block_eledia_telc_coursesearch'),
+        1
+    ));
 
     // Enable / Disable available layouts.
-    $choices = array(BLOCK_ETCOURSESEARCH_VIEW_CARD => get_string('list', 'block_eledia_telc_coursesearch'),
+    $choices = [BLOCK_ETCOURSESEARCH_VIEW_CARD => get_string('list', 'block_eledia_telc_coursesearch'),
             // BLOCK_ETCOURSESEARCH_VIEW_LIST => get_string('list', 'block_eledia_telc_coursesearch'),
-            BLOCK_ETCOURSESEARCH_VIEW_SUMMARY => get_string('cards', 'block_eledia_telc_coursesearch'));
+            BLOCK_ETCOURSESEARCH_VIEW_SUMMARY => get_string('cards', 'block_eledia_telc_coursesearch')];
     $settings->add(new admin_setting_configmulticheckbox(
-            'block_eledia_telc_coursesearch/layouts',
-            get_string('layouts', 'block_eledia_telc_coursesearch'),
-            get_string('layouts_help', 'block_eledia_telc_coursesearch'),
-            $choices,
-            $choices));
-    unset ($choices);
-    
+        'block_eledia_telc_coursesearch/layouts',
+        get_string('layouts', 'block_eledia_telc_coursesearch'),
+        get_string('layouts_help', 'block_eledia_telc_coursesearch'),
+        $choices,
+        $choices
+    ));
+    unset($choices);
+
     // Enable / Disable available layouts.
     $choices = [
         BLOCK_ETCOURSESEARCH_OPTIONS_OFF => get_string('selectedoption_off', 'block_eledia_telc_coursesearch'),
@@ -58,80 +62,93 @@ if ($ADMIN->fulltree) {
         BLOCK_ETCOURSESEARCH_OPTIONS_BOTTOM => get_string('selectedoption_bottom', 'block_eledia_telc_coursesearch'),
     ];
     $settings->add(new admin_setting_configselect(
-            'block_eledia_telc_coursesearch/options_position',
-            get_string('selected_options_position', 'block_eledia_telc_coursesearch'),
-            get_string('selected_options_position_description', 'block_eledia_telc_coursesearch'),
-            BLOCK_ETCOURSESEARCH_OPTIONS_OFF,
-            $choices));
-    unset ($choices);
+        'block_eledia_telc_coursesearch/options_position',
+        get_string('selected_options_position', 'block_eledia_telc_coursesearch'),
+        get_string('selected_options_position_description', 'block_eledia_telc_coursesearch'),
+        BLOCK_ETCOURSESEARCH_OPTIONS_OFF,
+        $choices
+    ));
+    unset($choices);
 
     // Enable / Disable course filter items.
-    $settings->add(new admin_setting_heading('block_eledia_telc_coursesearch/availablegroupings',
-            get_string('availablegroupings', 'block_eledia_telc_coursesearch'),
-            get_string('availablegroupings_desc', 'block_eledia_telc_coursesearch')));
+    $settings->add(new admin_setting_heading(
+        'block_eledia_telc_coursesearch/availablegroupings',
+        get_string('availablegroupings', 'block_eledia_telc_coursesearch'),
+        get_string('availablegroupings_desc', 'block_eledia_telc_coursesearch')
+    ));
 
     $settings->add(new admin_setting_configcheckbox(
-            'block_eledia_telc_coursesearch/displaygroupingallincludinghidden',
-            get_string('allincludinghidden', 'block_eledia_telc_coursesearch'),
-            '',
-            0));
+        'block_eledia_telc_coursesearch/displaygroupingallincludinghidden',
+        get_string('allincludinghidden', 'block_eledia_telc_coursesearch'),
+        '',
+        0
+    ));
 
     $settings->add(new admin_setting_configcheckbox(
-            'block_eledia_telc_coursesearch/displaygroupingall',
-            get_string('all', 'block_eledia_telc_coursesearch'),
-            '',
-            1));
+        'block_eledia_telc_coursesearch/displaygroupingall',
+        get_string('all', 'block_eledia_telc_coursesearch'),
+        '',
+        1
+    ));
 
     $settings->add(new admin_setting_configcheckbox(
-            'block_eledia_telc_coursesearch/displaygroupinginprogress',
-            get_string('inprogress', 'block_eledia_telc_coursesearch'),
-            '',
-            1));
+        'block_eledia_telc_coursesearch/displaygroupinginprogress',
+        get_string('inprogress', 'block_eledia_telc_coursesearch'),
+        '',
+        1
+    ));
 
     $settings->add(new admin_setting_configcheckbox(
-            'block_eledia_telc_coursesearch/displaygroupingpast',
-            get_string('past', 'block_eledia_telc_coursesearch'),
-            '',
-            1));
+        'block_eledia_telc_coursesearch/displaygroupingpast',
+        get_string('past', 'block_eledia_telc_coursesearch'),
+        '',
+        1
+    ));
 
     $settings->add(new admin_setting_configcheckbox(
-            'block_eledia_telc_coursesearch/displaygroupingfuture',
-            get_string('future', 'block_eledia_telc_coursesearch'),
-            '',
-            1));
+        'block_eledia_telc_coursesearch/displaygroupingfuture',
+        get_string('future', 'block_eledia_telc_coursesearch'),
+        '',
+        1
+    ));
 
     $settings->add(new admin_setting_configcheckbox(
-            'block_eledia_telc_coursesearch/displaygroupingcustomfield',
-            get_string('customfield', 'block_eledia_telc_coursesearch'),
-            '',
-            0));
+        'block_eledia_telc_coursesearch/displaygroupingcustomfield',
+        get_string('customfield', 'block_eledia_telc_coursesearch'),
+        '',
+        0
+    ));
 
     $choices = \core_customfield\api::get_fields_supporting_course_grouping();
     if ($choices) {
         $choices  = ['' => get_string('choosedots')] + $choices;
         $settings->add(new admin_setting_configselect(
-                'block_eledia_telc_coursesearch/customfiltergrouping',
-                get_string('customfiltergrouping', 'block_eledia_telc_coursesearch'),
-                '',
-                '',
-                $choices));
+            'block_eledia_telc_coursesearch/customfiltergrouping',
+            get_string('customfiltergrouping', 'block_eledia_telc_coursesearch'),
+            '',
+            '',
+            $choices
+        ));
     } else {
         $settings->add(new admin_setting_configempty(
-                'block_eledia_telc_coursesearch/customfiltergrouping',
-                get_string('customfiltergrouping', 'block_eledia_telc_coursesearch'),
-                get_string('customfiltergrouping_nofields', 'block_eledia_telc_coursesearch')));
+            'block_eledia_telc_coursesearch/customfiltergrouping',
+            get_string('customfiltergrouping', 'block_eledia_telc_coursesearch'),
+            get_string('customfiltergrouping_nofields', 'block_eledia_telc_coursesearch')
+        ));
     }
     $settings->hide_if('block_eledia_telc_coursesearch/customfiltergrouping', 'block_eledia_telc_coursesearch/displaygroupingcustomfield');
 
     $settings->add(new admin_setting_configcheckbox(
-            'block_eledia_telc_coursesearch/displaygroupingfavourites',
-            get_string('favourites', 'block_eledia_telc_coursesearch'),
-            '',
-            1));
+        'block_eledia_telc_coursesearch/displaygroupingfavourites',
+        get_string('favourites', 'block_eledia_telc_coursesearch'),
+        '',
+        1
+    ));
 
     $settings->add(new admin_setting_configcheckbox(
-            'block_eledia_telc_coursesearch/displaygroupinghidden',
-            get_string('hiddencourses', 'block_eledia_telc_coursesearch'),
-            '',
-            1));
+        'block_eledia_telc_coursesearch/displaygroupinghidden',
+        get_string('hiddencourses', 'block_eledia_telc_coursesearch'),
+        '',
+        1
+    ));
 }

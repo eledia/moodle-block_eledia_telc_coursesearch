@@ -24,8 +24,7 @@ namespace block_eledia_telc_coursesearch;
  * @copyright  2019 Juan Leyva <juan@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-final class eledia_telc_coursesearch_test extends \advanced_testcase {
-
+final class myoverview_test extends \advanced_testcase {
     /**
      * Test getting block configuration
      */

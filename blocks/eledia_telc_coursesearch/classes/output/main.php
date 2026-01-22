@@ -42,7 +42,6 @@ require_once($CFG->dirroot . '/course/renderer.php');
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class main implements renderable, templatable {
-
     /**
      * Store the grouping preference.
      *
@@ -74,7 +73,7 @@ class main implements renderable, templatable {
     /**
      * Store the display categories config setting.
      *
-     * @var boolean
+     * @var bool
      */
     private $displaycategories;
 
@@ -88,49 +87,49 @@ class main implements renderable, templatable {
     /**
      * Store a course grouping option setting
      *
-     * @var boolean
+     * @var bool
      */
     private $displaygroupingallincludinghidden;
 
     /**
      * Store a course grouping option setting.
      *
-     * @var boolean
+     * @var bool
      */
     private $displaygroupingall;
 
     /**
      * Store a course grouping option setting.
      *
-     * @var boolean
+     * @var bool
      */
     private $displaygroupinginprogress;
 
     /**
      * Store a course grouping option setting.
      *
-     * @var boolean
+     * @var bool
      */
     private $displaygroupingfuture;
 
     /**
      * Store a course grouping option setting.
      *
-     * @var boolean
+     * @var bool
      */
     private $displaygroupingpast;
 
     /**
      * Store a course grouping option setting.
      *
-     * @var boolean
+     * @var bool
      */
     private $displaygroupingfavourites;
 
     /**
      * Store a course grouping option setting.
      *
-     * @var boolean
+     * @var bool
      */
     private $displaygroupinghidden;
 
@@ -176,7 +175,7 @@ class main implements renderable, templatable {
         $config = get_config('block_eledia_telc_coursesearch');
 
         // Build the course grouping option name to check if the given grouping is enabled afterwards.
-        $groupingconfigname = 'displaygrouping'.$grouping;
+        $groupingconfigname = 'displaygrouping' . $grouping;
         // Check the given grouping and remember it if it is enabled.
         if ($grouping && $config->$groupingconfigname == true) {
             $this->grouping = $grouping;
@@ -187,7 +186,7 @@ class main implements renderable, templatable {
         } else {
             $this->grouping = $this->get_fallback_grouping($config);
         }
-        unset ($groupingconfigname);
+        unset($groupingconfigname);
 
         // Remember which custom field value we were using, if grouping by custom field.
         $this->customfieldvalue = $customfieldvalue;
@@ -241,20 +240,20 @@ class main implements renderable, templatable {
 
         // Check and remember if the grouping selector should be shown at all or not.
         // It will be shown if more than 1 grouping option is enabled.
-        $displaygroupingselectors = array($this->displaygroupingallincludinghidden,
+        $displaygroupingselectors = [$this->displaygroupingallincludinghidden,
                 $this->displaygroupingall,
                 $this->displaygroupinginprogress,
                 $this->displaygroupingfuture,
                 $this->displaygroupingpast,
                 $this->displaygroupingfavourites,
-                $this->displaygroupinghidden);
+                $this->displaygroupinghidden];
         $displaygroupingselectorscount = count(array_filter($displaygroupingselectors));
         if ($displaygroupingselectorscount > 1 || $this->displaygroupingcustomfield) {
             $this->displaygroupingselector = true;
         } else {
             $this->displaygroupingselector = false;
         }
-        unset ($displaygroupingselectors, $displaygroupingselectorscount);
+        unset($displaygroupingselectors, $displaygroupingselectorscount);
     }
     /**
      * Determine the most sensible fallback grouping to use (in cases where the stored selection
@@ -304,7 +303,7 @@ class main implements renderable, templatable {
         if ($config = get_config('block_eledia_telc_coursesearch', 'layouts')) {
             $this->layouts = explode(',', $config);
         } else {
-            $this->layouts = array(BLOCK_ETCOURSESEARCH_VIEW_CARD);
+            $this->layouts = [BLOCK_ETCOURSESEARCH_VIEW_CARD];
         }
     }
 
@@ -353,8 +352,7 @@ class main implements renderable, templatable {
      */
     public function get_formatted_available_layouts_for_export() {
 
-        return array_map(array($this, 'format_layout_for_export'), $this->layouts);
-
+        return array_map([$this, 'format_layout_for_export'], $this->layouts);
     }
 
     /**
@@ -381,12 +379,17 @@ class main implements renderable, templatable {
         if (!$courses) {
             return [];
         }
-        list($csql, $params) = $DB->get_in_or_equal(array_keys($courses), SQL_PARAMS_NAMED);
+        [$csql, $params] = $DB->get_in_or_equal(array_keys($courses), SQL_PARAMS_NAMED);
         $select = "instanceid $csql AND fieldid = :fieldid";
         $params['fieldid'] = $fieldid;
         $distinctablevalue = $DB->sql_compare_text('value');
-        $values = $DB->get_records_select_menu('customfield_data', $select, $params, '',
-            "DISTINCT $distinctablevalue, $distinctablevalue AS value2");
+        $values = $DB->get_records_select_menu(
+            'customfield_data',
+            $select,
+            $params,
+            '',
+            "DISTINCT $distinctablevalue, $distinctablevalue AS value2"
+        );
         \core_collator::asort($values, \core_collator::SORT_NATURAL);
         $values = array_filter($values);
         if (!$values) {
@@ -465,23 +468,23 @@ class main implements renderable, templatable {
             $sort = $this->sort == BLOCK_ETCOURSESEARCH_SORTING_TITLE ? 'fullname' : 'ul.timeaccess desc';
         }
         $chelper = new \coursecat_helper();
-        $chelper->set_show_courses(20)->
-                set_courses_display_options([
+        $chelper->set_show_courses(20)
+            ->set_courses_display_options([
                 'recursive' => true,
                 'idonly' => true,
             ]);
 
-        $chelper->set_attributes(array('class' => 'frontpage-course-list-all'));
+        $chelper->set_attributes(['class' => 'frontpage-course-list-all']);
         $users_courses = \core_course_category::top()->get_courses($chelper->get_courses_display_options());
         // Collapse remaining fields if there are more than 4 custom fields.
         // I know, it's pretty.
-        $customfields = array_values(array_filter(externallib::get_customfields(), fn($value) => !is_null($value) ));
+        $customfields = array_values(array_filter(externallib::get_customfields(), fn($value) => !is_null($value)));
         $customfields_collapse = false;
         $customfield_collapsable = false;
         if (count($customfields) > 4) {
-           $customfields_collapse = array_splice($customfields, 4);
-           $customfields= array_splice($customfields, 0, 4);
-           $customfield_collapsable = true;
+            $customfields_collapse = array_splice($customfields, 4);
+            $customfields = array_splice($customfields, 0, 4);
+            $customfield_collapsable = true;
         }
         $options_position = get_config('block_eledia_telc_coursesearch', 'options_position');
 
@@ -520,7 +523,6 @@ class main implements renderable, templatable {
             $defaultvariables['options_' . $options_position] = true;
         }
         return array_merge($defaultvariables, $preferences);
-
     }
 
     /**
@@ -594,7 +596,6 @@ class main implements renderable, templatable {
                     ['title' => $title, 'intro' => $intro],
                 );
             }
-
         }
 
         return $this->generate_zero_state_data(

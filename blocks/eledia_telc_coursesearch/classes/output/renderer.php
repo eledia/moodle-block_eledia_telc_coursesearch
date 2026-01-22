@@ -35,7 +35,6 @@ use renderable;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class renderer extends plugin_renderer_base {
-
     /**
      * Return the main content for the block overview.
      *
@@ -45,13 +44,13 @@ class renderer extends plugin_renderer_base {
     public function render_main(main $main) {
         global $USER;
         $chelper = new \coursecat_helper();
-        $chelper->set_show_courses(20)->
-                set_courses_display_options([
+        $chelper->set_show_courses(20)
+            ->set_courses_display_options([
                 'recursive' => true,
                 'idonly' => true,
             ]);
 
-        $chelper->set_attributes(array('class' => 'frontpage-course-list-all'));
+        $chelper->set_attributes(['class' => 'frontpage-course-list-all']);
         $users_courses = \core_course_category::top()->get_courses($chelper->get_courses_display_options());
 
         // if (!count(enrol_get_all_users_courses($USER->id, true))) {
