@@ -81,42 +81,42 @@ if ($ADMIN->fulltree) {
         'block_eledia_telc_coursesearch/displaygroupingallincludinghidden',
         get_string('allincludinghidden', 'block_eledia_telc_coursesearch'),
         '',
-        0
+        '0'
     ));
 
     $settings->add(new admin_setting_configcheckbox(
         'block_eledia_telc_coursesearch/displaygroupingall',
         get_string('all', 'block_eledia_telc_coursesearch'),
         '',
-        1
+        '1'
     ));
 
     $settings->add(new admin_setting_configcheckbox(
         'block_eledia_telc_coursesearch/displaygroupinginprogress',
         get_string('inprogress', 'block_eledia_telc_coursesearch'),
         '',
-        1
+        '1'
     ));
 
     $settings->add(new admin_setting_configcheckbox(
         'block_eledia_telc_coursesearch/displaygroupingpast',
         get_string('past', 'block_eledia_telc_coursesearch'),
         '',
-        1
+        '1'
     ));
 
     $settings->add(new admin_setting_configcheckbox(
         'block_eledia_telc_coursesearch/displaygroupingfuture',
         get_string('future', 'block_eledia_telc_coursesearch'),
         '',
-        1
+        '1'
     ));
 
     $settings->add(new admin_setting_configcheckbox(
         'block_eledia_telc_coursesearch/displaygroupingcustomfield',
         get_string('customfield', 'block_eledia_telc_coursesearch'),
         '',
-        0
+        '0'
     ));
 
     $choices = \core_customfield\api::get_fields_supporting_course_grouping();
@@ -142,13 +142,13 @@ if ($ADMIN->fulltree) {
         'block_eledia_telc_coursesearch/displaygroupingfavourites',
         get_string('favourites', 'block_eledia_telc_coursesearch'),
         '',
-        1
+        '1'
     ));
 
     $settings->add(new admin_setting_configcheckbox(
         'block_eledia_telc_coursesearch/displaygroupinghidden',
         get_string('hiddencourses', 'block_eledia_telc_coursesearch'),
         '',
-        1
+        '1'
     ));
 }
