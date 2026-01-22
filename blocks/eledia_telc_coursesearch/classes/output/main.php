@@ -66,14 +66,14 @@ class main implements renderable, templatable {
     /**
      * Store the paging preference.
      *
-     * @var string String matching the paging constants defined in eledia_telc_coursesearch/lib.php
+     * @var int Integer matching the paging constants defined in eledia_telc_coursesearch/lib.php
      */
     private $paging;
 
     /**
      * Store the display categories config setting.
      *
-     * @var bool
+     * @var string String matching display category constants
      */
     private $displaycategories;
 

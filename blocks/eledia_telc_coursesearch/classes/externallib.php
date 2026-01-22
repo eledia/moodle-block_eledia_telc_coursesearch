@@ -965,6 +965,7 @@ class externallib extends external_api {
 
         [$insql, $params] = $DB->get_in_or_equal($courseids, SQL_PARAMS_NAMED);
         $searchterm = strtolower($searchdata['tagssearchterm']);
+        $and = '';
         if (!empty($searchterm)) {
             $tagnamelike = $DB->sql_like('t.name', ':tags_name', false);
             $params['tags_name'] = "%$searchterm%";
@@ -1022,6 +1023,7 @@ class externallib extends external_api {
         if ((int) $configdata->visibility === 2) {
             return $customfield->id;
         }
+        return null;
     }
 
     /**
@@ -1036,6 +1038,7 @@ class externallib extends external_api {
             return (object) ['id' => $customfield->id, 'name' => self::select_translation($customfield->name),
                 'description' => $customfield->description];
         }
+        return null;
     }
 
     /**
@@ -1220,7 +1223,8 @@ class externallib extends external_api {
             }
 
             $params[] = $fid;
-            $f = reset(array_splice($customfields, $idx, 1));
+            $spliced = array_splice($customfields, $idx, 1);
+            $f = reset($spliced);
             $csqls = [];
             foreach ($f['fieldvalues'] as $v) {
                 $csqls[] = $DB->sql_like('value', '?');
