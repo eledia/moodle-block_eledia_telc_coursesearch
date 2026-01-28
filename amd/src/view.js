@@ -20,21 +20,21 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-//import $, { error } from 'jquery';
+// Import $, { error } from 'jquery';
 import $ from 'jquery';
 import * as Repository from 'block_eledia_telc_coursesearch/repository';
 import * as PagedContentFactory from 'core/paged_content_factory';
 import * as PubSub from 'core/pubsub';
 import * as CustomEvents from 'core/custom_interaction_events';
 import * as Notification from 'core/notification';
-import { exception as displayException } from 'core/notification';
+import {exception as displayException} from 'core/notification';
 import * as Templates from 'core/templates';
 import * as CourseEvents from 'core_course/events';
 import SELECTORS from 'block_eledia_telc_coursesearch/selectors';
 import * as PagedContentEvents from 'core/paged_content_events';
 import * as Aria from 'core/aria';
-import { debounce } from 'core/utils';
-import { setUserPreference } from 'core_user/repository';
+import {debounce} from 'core/utils';
+import {setUserPreference} from 'core_user/repository';
 
 const TEMPLATES = {
     COURSES_CARDS: 'block_eledia_telc_coursesearch/view-cards',
@@ -681,7 +681,7 @@ const renderCourses = (root, coursesData) => {
  */
 const renderCategories = (dropdownContainer, dropdown, categoriesData, selectionsData, page) => {
 
-    // const filters = getFilterValues(categories);
+    // Const filters = getFilterValues(categories);
 
     const template = 'block_eledia_telc_coursesearch/nav-category-dropdown';
 
