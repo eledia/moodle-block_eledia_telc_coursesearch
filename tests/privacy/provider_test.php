@@ -24,15 +24,15 @@
  */
 namespace block_eledia_telc_coursesearch\privacy;
 
-defined('MOODLE_INTERNAL') || die();
-
 use core_privacy\local\request\writer;
 use block_eledia_telc_coursesearch\privacy\provider;
+
 /**
  * Unit tests for the block_eledia_telc_coursesearch implementation of the privacy API.
  *
  * @copyright  2018 Peter Dias <peter@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @covers \block_eledia_telc_coursesearch\privacy\provider
  */
 final class provider_test extends \core_privacy\tests\provider_testcase {
     /**

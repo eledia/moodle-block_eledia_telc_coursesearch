@@ -37,19 +37,19 @@
         </button>
         <ul class="dropdown-menu" role="menu" data-show-active-item data-skip-active-class="true" aria-labelledby="sortingdropdown">
             <li>
-                <a class="dropdown-item" href="#" data-filter="sort" data-pref="title" data-value="fullname" aria-controls="courses-view-{{uniqid}}" role="menuitem" {{#title}}aria-current="true"{{/title}}>
+                <a class="dropdown-item" href="#" data-filter="sort" data-pref="title" data-value="fullname" role="menuitem" {{#title}}aria-current="true"{{/title}}>
                     {{#str}} sortbytitle, block_eledia_telc_coursesearch {{/str}}
                 </a>
             </li>
             {{#showsortbyshortname}}
             <li>
-                <a class="dropdown-item" href="#" data-filter="sort" data-pref="shortname" data-value="shortname" aria-controls="courses-view-{{uniqid}}" role="menuitem" {{#shortname}}aria-current="true"{{/shortname}}>
+                <a class="dropdown-item" href="#" data-filter="sort" data-pref="shortname" data-value="shortname" role="menuitem" {{#shortname}}aria-current="true"{{/shortname}}>
                     {{#str}} sortbyshortname, block_eledia_telc_coursesearch {{/str}}
                 </a>
             </li>
              {{/showsortbyshortname}}
             <li>
-                <a class="dropdown-item" href="#" data-filter="sort" data-pref="lastaccessed" data-value="ul.timeaccess desc" aria-controls="courses-view-{{uniqid}}" role="menuitem" {{#lastaccessed}}aria-current="true"{{/lastaccessed}}>
+                <a class="dropdown-item" href="#" data-filter="sort" data-pref="lastaccessed" data-value="ul.timeaccess desc" role="menuitem" {{#lastaccessed}}aria-current="true"{{/lastaccessed}}>
                     {{#str}} sortbylastaccessed, block_eledia_telc_coursesearch {{/str}}
                 </a>
             </li>

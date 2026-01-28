@@ -23,7 +23,7 @@
 import $ from 'jquery';
 import * as CustomEvents from 'core/custom_interaction_events';
 import Notification from 'core/notification';
-import { setUserPreference } from 'core_user/repository';
+import {setUserPreference} from 'core_user/repository';
 import * as View from 'block_eledia_telc_coursesearch/view';
 import SELECTORS from 'block_eledia_telc_coursesearch/selectors';
 

@@ -1,0 +1,109 @@
+================================================================================
+MOODLE PLUGIN DIRECTORY SUBMISSION PACKAGE
+================================================================================
+
+Plugin Name:    block_eledia_telc_coursesearch
+Version:        2025120100
+Package:        eledia_telc_coursesearch_v2025120100.zip
+Created:        2026-01-28
+Package Size:   1.1 MB
+Total Files:    107
+
+================================================================================
+MOODLE COMPATIBILITY
+================================================================================
+
+Required Moodle Version:  4.5+ (2024100100)
+Tested On:                Moodle 4.5.8+
+PHP Versions:             8.1, 8.2, 8.3
+Databases:                PostgreSQL 15, MariaDB 10
+
+================================================================================
+QUALITY ASSURANCE - ALL TESTS PASSING ✓
+================================================================================
+
+✓ PHPUnit Tests:          30/30 passing
+✓ PHP Lint:               No errors
+✓ PHP Mess Detector:      Passing  
+✓ Moodle Code Checker:    No errors (warnings acceptable)
+✓ Moodle PHPDoc Checker:  No errors
+✓ Validation:             Passing
+✓ Upgrade Savepoints:     Passing
+✓ Mustache Lint:          Passing (HTML validation warnings acceptable)
+✓ Grunt:                  Passing (linting warnings acceptable)
+✓ Behat Features:         All passing
+
+GitHub CI Status: ✓ PASSING
+CI URL: https://github.com/eledia/moodle-block_eledia_telc_coursesearch/actions
+
+================================================================================
+PACKAGE CONTENTS
+================================================================================
+
+Key Files:
+- version.php                      Plugin version and requirements
+- block_eledia_telc_coursesearch.php  Main block class
+- README.md                        Documentation
+- lang/en/                         English language strings
+- lang/de/                         German language strings
+- classes/                         PHP classes
+- amd/src/                         JavaScript source
+- amd/build/                       Compiled JavaScript
+- templates/                       Mustache templates
+- tests/                          PHPUnit tests
+- db/                             Database definitions
+- pix/                            Icons
+- styles.css                      Styles
+- .github/workflows/              CI configuration
+
+================================================================================
+RECENT FIXES FOR SUBMISSION
+================================================================================
+
+1. Fixed SQL LIMIT/OFFSET syntax error (MariaDB compatibility)
+2. Fixed privacy provider prefix check
+3. Added parent::setUp() call in tests
+4. Fixed PHPDoc missing parameters
+5. Fixed CSS indentation and formatting
+6. Removed problematic !important declarations
+7. All PHPUnit tests now passing (5 errors fixed)
+8. All coding standards errors fixed
+
+================================================================================
+INSTALLATION
+================================================================================
+
+1. Extract the zip file
+2. Upload the 'eledia_telc_coursesearch' folder to: moodle/blocks/
+3. Visit Site Administration → Notifications
+4. Complete the installation process
+
+================================================================================
+PLUGIN DESCRIPTION
+================================================================================
+
+The eLeDia TELC Course Search block provides advanced course search and
+filtering functionality for Moodle, including:
+- Multi-criteria search (categories, tags, custom fields)
+- Multiple view modes (cards, list, summary)
+- Progress tracking
+- Favorite courses
+- Responsive design
+- Accessibility features
+
+================================================================================
+LICENSE
+================================================================================
+
+GNU GPL v3 or later
+Copyright 2024 Immanuel Pasanec <info@eledia.de>, eLeDia GmbH
+(made possible by TU Ilmenau)
+
+================================================================================
+SUPPORT
+================================================================================
+
+Issues: https://github.com/eledia/moodle-block_eledia_telc_coursesearch/issues
+Email:  info@eledia.de
+
+================================================================================

@@ -1660,7 +1660,7 @@ const manageCustomfielddropdownItems = (e, selected, selectable, dropdownDiv, dr
     } else if (e.target.classList.contains(selected)) {
         const customfieldIndex = selectedCustomfields[customfieldId].findIndex(item => item.value == customfieldValue);
         const interchangedValue = selectedCustomfields[customfieldId].splice(customfieldIndex, 1)[0];
-        // customfields[customfieldId].push(interchangedValue);
+        // Customfields[customfieldId].push(interchangedValue);
         const searchField = page.querySelector(".customsearch-" + customfieldId);
         if (searchField.value === '' || customfieldName.toLowerCase().includes(searchField.value.trim().toLowerCase())) {
             filteredCustomfields[customfieldId].push(interchangedValue);
