@@ -25,11 +25,11 @@ namespace block_eledia_telc_coursesearch;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 final class externallib_test extends \advanced_testcase {
-
     /**
      * Setup function
      */
     protected function setUp(): void {
+        parent::setUp();
         $this->resetAfterTest(true);
     }
 
