@@ -65,11 +65,11 @@ class externallib extends external_api {
     public static function get_data() {
         global $USER, $DB;
 
-        // Ensure the user is logged in
+        // Ensure the user is logged in.
         $context = \context_system::instance();
         self::validate_context($context);
 
-        // Get the user's enrolled courses
+        // Get the user's enrolled courses.
         $sql = "SELECT c.id, c.fullname, c.shortname
                   FROM {course} c
                   JOIN {enrol} e ON e.courseid = c.id
@@ -78,7 +78,7 @@ class externallib extends external_api {
         $params = ['userid' => $USER->id];
         $courses = $DB->get_records_sql($sql, $params);
 
-        // Format the data to return
+        // Format the data to return.
         $result = [];
         foreach ($courses as $course) {
             $result[] = [
@@ -118,15 +118,9 @@ class externallib extends external_api {
         if (empty($searchstrings) || $allowedrecursions < count($searchstrings)) {
             return $result;
         }
-        // AllowedRecursions = $allowedRecursions - 1;
         $currentsearchstr = array_shift($searchstrings);
         $result['courses'] = array_map(function ($course) use ($currentsearchstr) {
             $course = (array)$course;
-            /*
-            $course = array_filter($course, function ($value, $key) {
-            return !in_array($key, ['summary', 'courseimage']);
-            }, ARRAY_FILTER_USE_BOTH);
-            */
             $matchfound = array_reduce(array_keys($course), function ($carry, $key) use ($course, $currentsearchstr) {
                 return $carry || (is_string($course[$key]) && preg_match("/" . $currentsearchstr . "/i", $course[$key]));
             }, false);
