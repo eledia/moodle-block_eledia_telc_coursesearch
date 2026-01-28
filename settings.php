@@ -46,7 +46,7 @@ if ($ADMIN->fulltree) {
     // Note: This setting should not be changed as it breaks the plugin frontend.
     // Hidden from admin interface but accessible to code.
     $choices = [BLOCK_ETCOURSESEARCH_VIEW_CARD => get_string('list', 'block_eledia_telc_coursesearch'),
-            // BLOCK_ETCOURSESEARCH_VIEW_LIST => get_string('list', 'block_eledia_telc_coursesearch'),
+            // BLOCK_ETCOURSESEARCH_VIEW_LIST => get_string('list', 'block_eledia_telc_coursesearch').
             BLOCK_ETCOURSESEARCH_VIEW_SUMMARY => get_string('cards', 'block_eledia_telc_coursesearch')];
     if (get_config('block_eledia_telc_coursesearch', 'layouts') === false) {
         set_config('layouts', implode(',', array_keys($choices)), 'block_eledia_telc_coursesearch');
@@ -132,7 +132,8 @@ if ($ADMIN->fulltree) {
             get_string('customfiltergrouping_nofields', 'block_eledia_telc_coursesearch')
         ));
     }
-    $settings->hide_if('block_eledia_telc_coursesearch/customfiltergrouping', 'block_eledia_telc_coursesearch/displaygroupingcustomfield');
+    $settings->hide_if('block_eledia_telc_coursesearch/customfiltergrouping',
+        'block_eledia_telc_coursesearch/displaygroupingcustomfield');
 
     // Note: This setting is obsolete but required by the code.
     // Hidden from admin interface but accessible to code.

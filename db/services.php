@@ -35,13 +35,13 @@ $functions = [
         'capabilities' => 'moodle/category:viewhiddencategories',
 
         // An optional list of services where the function will be included.
-        /*'services' => [*/
-        /*    // A standard Moodle install includes one default service:*/
-        /*    // - MOODLE_OFFICIAL_MOBILE_SERVICE.*/
-        /*    // Specifying this service means that your function will be available for*/
-        /*    // use in the Moodle Mobile App.*/
-        /*    MOODLE_OFFICIAL_MOBILE_SERVICE,*/
-        /*]*/
+        // 'services' => [
+        //     A standard Moodle install includes one default service:
+        //     - MOODLE_OFFICIAL_MOBILE_SERVICE.
+        //     Specifying this service means that your function will be available for
+        //     use in the Moodle Mobile App.
+        //     MOODLE_OFFICIAL_MOBILE_SERVICE,
+        // ],
     ],
     'block_eledia_telc_coursesearch_get_available_categories' => [
         'classname' => 'block_eledia_telc_coursesearch\externallib',
@@ -52,13 +52,13 @@ $functions = [
         // 'capabilities' => 'moodle/category:viewhiddencategories',
         'ajax' => true,
         // An optional list of services where the function will be included.
-        /*'services' => [*/
-        /*    // A standard Moodle install includes one default service:*/
-        /*    // - MOODLE_OFFICIAL_MOBILE_SERVICE.*/
-        /*    // Specifying this service means that your function will be available for*/
-        /*    // use in the Moodle Mobile App.*/
-        /*    MOODLE_OFFICIAL_MOBILE_SERVICE,*/
-        /*]*/
+        // 'services' => [
+        //     A standard Moodle install includes one default service:
+        //     - MOODLE_OFFICIAL_MOBILE_SERVICE.
+        //     Specifying this service means that your function will be available for
+        //     use in the Moodle Mobile App.
+        //     MOODLE_OFFICIAL_MOBILE_SERVICE,
+        // ],
     ],
     'block_eledia_telc_coursesearch_get_available_tags' => [
         'classname' => 'block_eledia_telc_coursesearch\externallib',
@@ -76,13 +76,13 @@ $functions = [
         // 'capabilities' => 'moodle/category:viewhiddencategories',
         'ajax' => true,
         // An optional list of services where the function will be included.
-        /*'services' => [*/
-        /*    // A standard Moodle install includes one default service:*/
-        /*    // - MOODLE_OFFICIAL_MOBILE_SERVICE.*/
-        /*    // Specifying this service means that your function will be available for*/
-        /*    // use in the Moodle Mobile App.*/
-        /*    MOODLE_OFFICIAL_MOBILE_SERVICE,*/
-        /*]*/
+        // 'services' => [
+        //     A standard Moodle install includes one default service:
+        //     - MOODLE_OFFICIAL_MOBILE_SERVICE.
+        //     Specifying this service means that your function will be available for
+        //     use in the Moodle Mobile App.
+        //     MOODLE_OFFICIAL_MOBILE_SERVICE,
+        // ],
     ],
     'block_eledia_telc_coursesearch_get_customfields' => [
         'classname' => 'block_eledia_telc_coursesearch\externallib',
@@ -93,13 +93,13 @@ $functions = [
         // 'capabilities' => 'moodle/category:viewhiddencategories',
         'ajax' => true,
         // An optional list of services where the function will be included.
-        /*'services' => [*/
-        /*    // A standard Moodle install includes one default service:*/
-        /*    // - MOODLE_OFFICIAL_MOBILE_SERVICE.*/
-        /*    // Specifying this service means that your function will be available for*/
-        /*    // use in the Moodle Mobile App.*/
-        /*    MOODLE_OFFICIAL_MOBILE_SERVICE,*/
-        /*]*/
+        // 'services' => [
+        //     A standard Moodle install includes one default service:
+        //     - MOODLE_OFFICIAL_MOBILE_SERVICE.
+        //     Specifying this service means that your function will be available for
+        //     use in the Moodle Mobile App.
+        //     MOODLE_OFFICIAL_MOBILE_SERVICE,
+        // ],
     ],
     'block_eledia_telc_coursesearch_get_courseview' => [
         'classname' => 'block_eledia_telc_coursesearch\externallib',
