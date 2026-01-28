@@ -689,7 +689,7 @@ const renderCategories = (dropdownContainer, dropdown, categoriesData, selection
     return Templates.renderForPromise(template, {
         categories: categoriesData,
         catselections: selectionsData,
-    }).then(({ html, js }) => {
+    }).then(({html, js}) => {
         const renderResult = Templates.replaceNodeContents(dropdownContainer, html, js);
         const catDropdown = page.querySelector(dropdown);
         catDropdown.style.display = 'block';
@@ -715,7 +715,7 @@ const renderTags = (dropdownContainer, dropdown, tagsData, selectionsData, page)
     return Templates.renderForPromise(template, {
         tags: tagsData,
         tagsselections: selectionsData,
-    }).then(({ html, js }) => {
+    }).then(({html, js}) => {
         const renderResult = Templates.replaceNodeContents(dropdownContainer, html, js);
         const catDropdown = page.querySelector(dropdown);
         catDropdown.style.display = 'block';
@@ -743,7 +743,7 @@ const renderCustomfields = (dropdownContainer, dropdown, customfieldsData, selec
         customselections: selectionsData,
         customfieldid: currentCustomField,
         description: document.querySelector(dropdownContainer).dataset.description,
-    }).then(({ html, js }) => {
+    }).then(({html, js}) => {
         const renderResult = Templates.replaceNodeContents(dropdownContainer, html, js);
         const cuDropdown = page.querySelector(dropdown);
         cuDropdown.style.display = 'block';
@@ -827,7 +827,7 @@ const pageBuilder = (coursesData, currentPage, pageData, actions, activeSearch =
         const currentPageLength = pageCourses.length;
         if (currentPageLength < pageData.limit) {
             nextPageStart = pageData.limit - currentPageLength;
-            pageCourses = { ...loadedPages[currentPage].courses, ...courses.slice(0, nextPageStart) };
+            pageCourses = {...loadedPages[currentPage].courses, ...courses.slice(0, nextPageStart)};
         }
     } else {
         // When the page limit is zero, there is only one page of courses, no start for next page.
@@ -1024,7 +1024,7 @@ const initializePagedContent = (root, promiseFunction, inputValue = null, params
     const pagingLimit = parseInt(root.find(SELECTORS.courseView.region).attr('data-paging'), 10);
     let itemsPerPage = itemsPerPageFunc(pagingLimit, root);
 
-    const config = { ...{}, ...DEFAULT_PAGED_CONTENT_CONFIG };
+    const config = {...{}, ...DEFAULT_PAGED_CONTENT_CONFIG};
     config.eventNamespace = namespace;
 
     const pagedContentPromise = PagedContentFactory.createWithLimit(
@@ -1489,7 +1489,9 @@ export const clearCustomfieldSearch = (clearCustomfieldIcons) => {
  *
  * @param {HTMLElement} icon Our closing icon to manipulate.
  */
-export const clearCustomfieldSingleIconSearch = icon => { icon.classList.add('d-none'); };
+export const clearCustomfieldSingleIconSearch = icon => {
+    icon.classList.add('d-none');
+};
 
 /**
  * Change the searching icon to its' active state. *
@@ -1571,7 +1573,7 @@ const manageCategorydropdownItems = (e, selected, selectable, dropdownDiv, dropd
     return Templates.renderForPromise(template, {
         categories: selectableCategories,
         catselections: selectedCategories,
-    }).then(({ html, js }) => {
+    }).then(({html, js}) => {
         const renderResult = Templates.replaceNodeContents(dropdownDiv, html, js);
         const catDropdown = page.querySelector(dropdown);
         catDropdown.style.display = 'block';
@@ -1605,7 +1607,7 @@ const manageTagsdropdownItems = (e, selected, selectable, dropdownDiv, dropdown,
     return Templates.renderForPromise(template, {
         tags: selectableTags,
         tagsselections: selectedTags,
-    }).then(({ html, js }) => {
+    }).then(({html, js}) => {
         const renderResult = Templates.replaceNodeContents(dropdownDiv, html, js);
         const tagsDropdown = page.querySelector(dropdown);
         tagsDropdown.style.display = 'block';
@@ -1642,7 +1644,7 @@ const manageCustomfielddropdownCollapse = () => {
  * @param {object} page
  **/
 const manageCustomfielddropdownItems = (e, selected, selectable, dropdownDiv, dropdown, promiseFunction, page) => {
-    // const template = 'block_eledia_telc_coursesearch/nav-customfield-dropdown';
+    // Const template = 'block_eledia_telc_coursesearch/nav-customfield-dropdown'.
     const customfieldValue = e.target.dataset.selectvalue;
     const customfieldName = e.target.dataset.selectname;
     const customfieldId = e.target.dataset.customfieldid;
@@ -1652,7 +1654,7 @@ const manageCustomfielddropdownItems = (e, selected, selectable, dropdownDiv, dr
         selectedCustomfields[customfieldId].sort((a, b) => {
             return ('' + a.name).localeCompare(b.name);
         });
-        //filteredCustomfields[customfieldId].splice(
+        // FilteredCustomfields[customfieldId].splice(
         //    filteredCustomfields[customfieldId].findIndex(item => item.value == customfieldValue),
         //    1);
     } else if (e.target.classList.contains(selected)) {
@@ -1768,7 +1770,7 @@ function renderSelectOptions() {
     });
     Templates.renderForPromise('block_eledia_telc_coursesearch/nav-selected-option-items', {
         options: options
-    }).then(({ html, js }) => {
+    }).then(({html, js}) => {
         return Templates.replaceNodeContents('.coursesearchitems', html, js);
     }).catch(error => displayException(error));
 }
