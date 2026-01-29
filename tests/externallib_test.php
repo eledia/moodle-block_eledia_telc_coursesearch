@@ -19,10 +19,11 @@ namespace block_eledia_telc_coursesearch;
 /**
  * Unit tests for web service functions
  *
- * @package    block_eledia_telc_coursesearch
- * @category   test
- * @copyright  2024 eLeDia GmbH
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package block_eledia_telc_coursesearch
+ * @category test
+ * @copyright 2025 eLeDia GmbH
+ * @author Immanuel Pasanec <support@eledia.de>
+ * @license https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 final class externallib_test extends \advanced_testcase {
     /**

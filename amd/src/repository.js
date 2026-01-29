@@ -17,8 +17,10 @@
  * A javascript module to retrieve enrolled courses from the server.
  *
  * @module block_eledia_telc_coursesearch/repository
- * @copyright  2018 Bas Brands <bas@moodle.com>
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package block_eledia_telc_coursesearch
+ * @copyright 2025 eLeDia GmbH
+ * @author Immanuel Pasanec <support@eledia.de>
+ * @license https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 import Ajax from 'core/ajax';

@@ -17,9 +17,10 @@
 /**
  * eledia_telc_coursesearch block rendrer
  *
- * @package    block_eledia_telc_coursesearch
- * @copyright  2016 Ryan Wyllie <ryan@moodle.com>
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package block_eledia_telc_coursesearch
+ * @copyright 2025 eLeDia GmbH
+ * @author Immanuel Pasanec <support@eledia.de>
+ * @license https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 namespace block_eledia_telc_coursesearch\output;
 
@@ -29,9 +30,10 @@ use renderable;
 /**
  * eledia_telc_coursesearch block renderer
  *
- * @package    block_eledia_telc_coursesearch
- * @copyright  2016 Ryan Wyllie <ryan@moodle.com>
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package block_eledia_telc_coursesearch
+ * @copyright 2025 eLeDia GmbH
+ * @author Immanuel Pasanec <support@eledia.de>
+ * @license https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class renderer extends plugin_renderer_base {
     /**

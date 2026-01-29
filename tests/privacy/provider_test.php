@@ -17,10 +17,11 @@
 /**
  * Unit tests for the block_eledia_telc_coursesearch implementation of the privacy API.
  *
- * @package    block_eledia_telc_coursesearch
- * @category   test
- * @copyright  2018 Peter Dias <peter@moodle.com>
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package block_eledia_telc_coursesearch
+ * @category test
+ * @copyright 2025 eLeDia GmbH
+ * @author Immanuel Pasanec <support@eledia.de>
+ * @license https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 namespace block_eledia_telc_coursesearch\privacy;
 
@@ -30,8 +31,10 @@ use block_eledia_telc_coursesearch\privacy\provider;
 /**
  * Unit tests for the block_eledia_telc_coursesearch implementation of the privacy API.
  *
- * @copyright  2018 Peter Dias <peter@moodle.com>
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package block_eledia_telc_coursesearch
+ * @copyright 2025 eLeDia GmbH
+ * @author Immanuel Pasanec <support@eledia.de>
+ * @license https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @covers \block_eledia_telc_coursesearch\privacy\provider
  */
 final class provider_test extends \core_privacy\tests\provider_testcase {

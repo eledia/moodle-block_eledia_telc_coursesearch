@@ -17,9 +17,10 @@
 /**
  * Lang strings for the eledia_telc_coursesearch block.
  *
- * @package    block_eledia_telc_coursesearch
- * @copyright  2024 Immanuel Pasanec <info@eledia.de>, eLeDia GmbH (made possible by TU Ilmenau)
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package block_eledia_telc_coursesearch
+ * @copyright 2025 eLeDia GmbH
+ * @author Immanuel Pasanec <support@eledia.de>
+ * @license https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 $string['addtofavourites'] = 'Star this course';
